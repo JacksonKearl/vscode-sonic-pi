@@ -27,14 +27,15 @@ const OSC = require('osc-js')
 
 export class OscSender {
 	private osc: any
-	constructor() {
+	constructor(private port: number) {
 		this.osc = new OSC({
-			plugin: new OSC.DatagramPlugin({ send: { port: 51235, host: '127.0.0.1' } }),
+			plugin: new OSC.DatagramPlugin({ send: { port, host: '127.0.0.1' } }),
 		})
 		this.osc.open()
 	}
 
 	send(msg: any) {
+		console.log('sending on port', this.port, msg)
 		this.osc.send(msg)
 	}
 }

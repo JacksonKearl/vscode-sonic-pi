@@ -66,10 +66,11 @@ export class Main {
 	oscMidiInPort: number
 	websocketPort: number
 
+	portsInitalized: Promise<OscSender>
+	portsInitalizedResolver!: (sender: OscSender) => void
+
 	logOutput: vscode.OutputChannel
 	cuesOutput: vscode.OutputChannel
-
-	oscSender: OscSender
 
 	serverStarted: boolean
 
@@ -102,6 +103,8 @@ export class Main {
 		if (this.config.sonicPiRootDirectory()) {
 			this.rootPath = this.config.sonicPiRootDirectory()
 		}
+
+		this.portsInitalized = new Promise((r) => (this.portsInitalizedResolver = r))
 
 		if (this.config.commandPath()) {
 			this.rubyPath = this.config.commandPath()
@@ -155,7 +158,7 @@ export class Main {
 
 		this.serverStarted = false
 
-		this.oscSender = new OscSender()
+		// this.oscSender = new OscSender()
 
 		// create an uuid for the editor
 		this.guiUuid = uuidv4()
@@ -420,6 +423,8 @@ export class Main {
 		this.oscMidiInPort = port_map.get('osc-midi-in')!
 		this.websocketPort = port_map.get('websocket')!
 
+		this.portsInitalizedResolver(new OscSender(this.guiSendToServerPort))
+
 		// FIXME: for now, we assume all ports are available.
 		/*
         bool glts_available = checkPort(gui_listen_to_server_port);
@@ -497,7 +502,7 @@ export class Main {
 	}
 
 	sendOsc(message: any) {
-		this.oscSender.send(message)
+		void this.portsInitalized.then((sender) => sender.send(message))
 	}
 
 	runCode(code: string, offset: number = 0) {
