@@ -1,3 +1,6 @@
+import { writeFileSync } from 'fs'
+import { join } from 'path'
+
 const fx = `
 # FX
 
@@ -5822,26 +5825,12 @@ const extractInfo = (doc: string): BuiltIn[] => {
 
 				index++
 			} while (lines[index] && !lines[index]?.startsWith('#'))
+			building.options!.push(buildingOption as BuiltIn['options'][number])
 		}
 	}
+	info.push(building as BuiltIn)
+
 	return info
 }
-
-// console.log(JSON.stringify(extractInfo(fx), undefined, 2))
-// console.log(JSON.stringify(extractInfo(synths), undefined, 2))
-
-const options = new Map<string, Set<string>>()
-
-extractInfo(synths)
-	.flatMap((fx) => fx.options)
-	.forEach((opt) => {
-		const existing = options.get(opt.name) ?? new Set()
-		const attrs = { detail: opt.detail, default: opt.default, can_slide: opt.can_slide }
-		if (!existing.has(JSON.stringify(attrs))) {
-			existing.add(JSON.stringify(attrs))
-		}
-
-		options.set(opt.name, existing)
-	})
-
-console.log(options)
+writeFileSync(join(__dirname, 'fx.json'), JSON.stringify(extractInfo(fx), undefined, 2))
+writeFileSync(join(__dirname, 'synths.json'), JSON.stringify(extractInfo(synths), undefined, 2))

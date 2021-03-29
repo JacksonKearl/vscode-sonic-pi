@@ -105,7 +105,7 @@ const getValidArgumentsAtPosition = (
 	const lookUp = (haystack: string[]): string | undefined => {
 		for (let lineNum = position.line; lineNum >= 0; lineNum--) {
 			const line = document.lineAt(lineNum).text
-			const found = haystack.find((needle) => line.includes(needle))
+			const found = haystack.find((needle) => line.includes(':' + needle))
 			if (found) {
 				return found
 			}

@@ -76,8 +76,13 @@
 				"when": "editorLangId=='sonic-pi'"
 			},
 			{
-				"command": "vscode-sonic-pi.runselected",
+				"command": "vscode-sonic-pi.run",
 				"key": "alt+r",
+				"when": "editorLangId=='sonic-pi'"
+			},
+			{
+				"command": "vscode-sonic-pi.runselected",
+				"key": "alt+t",
 				"when": "editorLangId=='sonic-pi'"
 			},
 			{
