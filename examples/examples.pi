@@ -98,7 +98,7 @@ end
 
 live_loop :foo do
   use_synth :prophet
-  play :c1, release: 8, cutoff: rrand(70, 130)
+  play :c1, release: 8, cutoff: rrand(70, 130),
   sleep 8
 end
 
@@ -134,7 +134,7 @@ with_fx :echo, phase: 0.5 do
   sleep 0.5
   sample :elec_plip
   sleep 0.5
-  play 62
+  play 62,
 end
 
 with_fx :reverb do
