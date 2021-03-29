@@ -1,9 +1,14 @@
 {
 	"name": "vscode-sonic-pi",
-	"displayName": "vscode-sonic-pi",
+	"displayName": "Sonic Pi",
 	"publisher": "jakearl",
-	"description": "",
+	"description": "Language support and code running for Sonic Pi scripts",
+	"preview": true,
 	"version": "0.0.1",
+	"repository": {
+		"url": "https://github.com/JacksonKearl/vscode-sonic-pi"
+	},
+	"icon": "img/icon.png",
 	"engines": {
 		"vscode": "^1.54.0"
 	},
