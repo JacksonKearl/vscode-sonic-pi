@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../RollDice-Discord"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../PrattParse"
+		}
+	],
+	"settings": {}
+}

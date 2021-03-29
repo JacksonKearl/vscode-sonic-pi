@@ -1,0 +1,214 @@
+play :C
+sleep 0.5
+play :D
+sleep 0.5
+play :E
+
+play 60, attack: 2
+sleep 3
+play 65, attack: 0.5
+sleep 3
+play 60, attack: 0.3, sustain: 1, release: 1
+
+use_synth :saw
+play 38
+sleep 0.25
+play 50
+sleep 0.25
+use_synth :prophet
+play 57
+
+sample :ambi_lunar_land
+sleep 1
+play 48
+sleep 0.5
+play 36
+sample :ambi_drone
+sleep 1
+play 36
+
+sample :loop_amen, attack: 0.75, release: 0.75
+sample :drum_cymbal_open, attack: 0.01, sustain: 0, release: 0.1
+
+use_synth :dsaw
+
+loop do
+  play 50, amp: 0.3, release: 2
+  play 53, amp: 0.3, release: 2 if one_in(2)
+  play 57, amp: 0.3, release: 2 if one_in(3)
+  play 60, amp: 0.3, release: 2 if one_in(4)
+  sleep 1.5
+end
+
+define :foo do
+  play 50
+  sleep 1
+  play 55
+  sleep 0.5
+end
+
+foo
+
+sleep 1
+
+2.times do
+  foo
+end
+
+sample_name = :loop_amen
+sample sample_name
+
+sample :loop_amen
+sleep sample_duration(:loop_amen)
+sample :loop_amen, rate: 0.5
+sleep sample_duration(:loop_amen, rate: 0.5)
+sample :loop_amen
+sleep sample_duration(:loop_amen)
+
+
+in_thread do
+  loop do
+    cue :tick
+    sleep 1
+  end
+end
+
+
+
+in_thread do
+  loop do
+    sync :tick
+    sample :drum_heavy_kick
+  end
+end
+
+in_thread do
+  loop do
+    cue [:foo, :bar, :baz].choose
+    sleep 0.5
+  end
+end
+
+in_thread do
+  loop do
+    sync :foo
+    sample :elec_beep
+  end
+end
+
+live_loop :foo do
+  use_synth :prophet
+  play :c1, release: 8, cutoff: rrand(70, 130)
+  sleep 8
+end
+
+live_loop :bar do
+  sample :bd_haus
+  sleep 0.5
+end
+
+in_thread do
+  loop do
+    sync :bar
+    sample :elec_flip
+  end
+end
+
+in_thread do
+  loop do
+    sync :baz
+    sample :elec_blup
+  end
+end
+
+with_fx :reverb do
+  play 50
+  sleep 0.5
+  sample :elec_plip
+  sleep 0.5
+  play 62
+end
+
+with_fx :echo, phase: 0.5 do
+  play 50
+  sleep 0.5
+  sample :elec_plip
+  sleep 0.5
+  play 62
+end
+
+with_fx :reverb do
+  with_fx :echo, phase: 0.5, decay: 8 do
+    play 50
+    sleep 0.5
+    sample :elec_blup
+    sleep 0.5
+    play 62
+  end
+end
+
+loop do
+  with_fx :reverb, reps: 16 do
+
+
+  loop do
+  with_fx :reverb do
+    16.times do
+      play 60, release: 0.1
+      sleep 0.125
+    end
+  end
+end
+
+s = play 60, release: 5
+sleep 0.5
+control s, note: 65
+sleep 0.5
+control s, note: 67
+sleep 3
+control s, note: 72
+play 60, release: 0.1
+
+loop do
+  with_fx :reverb do
+    16.times do
+      play 60, release: 0.1
+      sleep 0.125
+    end
+  end
+end
+
+with_fx :reverb do |r|
+  play 50
+  sleep 0.5
+  control r, mix: 0.7
+  play 55
+  sleep 1
+  control r, mix: 0.9
+  sleep 1
+  play 62
+end
+
+
+with_fx :wobble, phase: 1, phase_slide: 5 do |e|
+  use_synth :dsaw
+  play 50, release: 5
+  control e, phase: 0.025
+end
+
+s = play 60, release: 5
+sleep 0.5
+control s, note: 65
+sleep 0.5
+control s, note: 67
+sleep 3
+control s, note: 72
+
+s = play 60, release: 5, note_slide: 1
+sleep 0.5
+control s, note: 65
+control s, note: 65
+sleep 0.5
+control s, note: 67
+sleep 3
+control s, note: 72
