@@ -69,24 +69,15 @@
 				"category": "Sonic Pi"
 			}
 		],
-		"menus": {
-			"editor/title/run": [
-				{
-					"command": "vscode-sonic-pi.run",
-					"when": "editorLangId=='sonic-pi'",
-					"group": "primary"
-				}
-			]
-		},
 		"keybindings": [
 			{
 				"command": "vscode-sonic-pi.run",
-				"key": "alt+r",
+				"key": "F5",
 				"when": "editorLangId=='sonic-pi'"
 			},
 			{
 				"command": "vscode-sonic-pi.runselected",
-				"key": "alt+t",
+				"key": "alt+r",
 				"when": "editorLangId=='sonic-pi'"
 			},
 			{
