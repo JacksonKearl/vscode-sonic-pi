@@ -54,7 +54,7 @@ class SynthCompletionItemProvider implements vscode.CompletionItemProvider {
 		token: vscode.CancellationToken,
 		context: vscode.CompletionContext,
 	): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList<vscode.CompletionItem>> {
-		if (!document.lineAt(position.line).text.includes('use_synth')) {
+		if (!document.lineAt(position.line).text.includes('synth')) {
 			return []
 		}
 		const line = document.lineAt(position.line).text
@@ -281,6 +281,15 @@ class HoverProvider implements vscode.HoverProvider {
 
 export function activate(context: vscode.ExtensionContext) {
 	activate_runner(context)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('vscode-sonic-pi.openExamples', () => {
+			void vscode.commands.executeCommand(
+				'vscode.openFolder',
+				vscode.Uri.joinPath(context.extensionUri, 'examples'),
+			)
+		}),
+	)
 
 	context.subscriptions.push(
 		vscode.languages.registerCompletionItemProvider(

@@ -11,7 +11,11 @@
 		"Programming Languages"
 	],
 	"activationEvents": [
-		"onLanguage:sonic-pi"
+		"onLanguage:sonic-pi",
+		"onCommand:vscode-sonic-pi.openExamples",
+		"onCommand:vscode-sonic-pi.startserver",
+		"onCommand:vscode-sonic-pi.run",
+		"onCommand:vscode-sonic-pi.runselected"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -35,6 +39,11 @@
 				"category": "Sonic Pi"
 			},
 			{
+				"command": "vscode-sonic-pi.openExamples",
+				"title": "Open Examples",
+				"category": "Sonic Pi"
+			},
+			{
 				"command": "vscode-sonic-pi.run",
 				"title": "Run",
 				"category": "Sonic Pi"
@@ -55,6 +64,15 @@
 				"category": "Sonic Pi"
 			}
 		],
+		"menus": {
+			"editor/title/run": [
+				{
+					"command": "vscode-sonic-pi.run",
+					"when": "editorLangId=='sonic-pi'",
+					"group": "primary"
+				}
+			]
+		},
 		"keybindings": [
 			{
 				"command": "vscode-sonic-pi.run",
