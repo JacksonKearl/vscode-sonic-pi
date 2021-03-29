@@ -8,7 +8,7 @@ export const commands: { token: string; description?: string }[] = [
 	{ token: 'cue', description: 'Dispatch to all listening `sync` waits to continue execution' },
 	{ token: 'with_fx', description: 'Build a new effect and run a segment using it' },
 	{ token: 'control', description: 'Modify an existing operation' },
-	{ token: 'live_loop', description: 'Create  loop running in a new thread with a given name' },
+	{ token: 'live_loop', description: 'Create a loop running in a new thread with a given name' },
 	{ token: 'tick', description: 'Increment and access the live_loop counter' },
 	{ token: 'look', description: 'Access the live_loop counter' },
 	{ token: 'choose', description: 'Select a random entry from the list' },

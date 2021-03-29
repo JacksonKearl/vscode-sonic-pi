@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
-import { samples, synths, fx, commands } from './builtins'
+import { samples, synths, fx, commands } from './builtins/builtins'
+import { activate as activate_runner } from './source-runner/extension'
 
 const selector = { language: 'sonic-pi' }
 
@@ -279,6 +280,8 @@ class HoverProvider implements vscode.HoverProvider {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+	activate_runner(context)
+
 	context.subscriptions.push(
 		vscode.languages.registerCompletionItemProvider(
 			selector,

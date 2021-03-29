@@ -4,8 +4,7 @@
 		"ecmaVersion": 6,
 		"sourceType": "module",
 		"project": [
-			"./tsconfig.json",
-			"./tsconfig.test.json"
+			"./tsconfig.json"
 		]
 	},
 	"plugins": [
