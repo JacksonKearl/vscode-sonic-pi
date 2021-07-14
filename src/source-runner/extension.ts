@@ -33,10 +33,26 @@ import * as vscode from 'vscode'
 import { Main } from './main'
 import { Config } from './config'
 
+let main: Main
+
+export const runScript = (code: string) => {
+	if (!main) {
+		throw Error('Runner not initialized')
+	}
+	main.runCode(code)
+}
+
+export const stopAllScripts = () => {
+	if (!main) {
+		throw Error('Runner not initialized')
+	}
+	main.stopAllJobs()
+}
+
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Ruby detected. Sonic Pi editor extension active!')
 
-	let main = new Main()
+	main = new Main()
 
 	main.checkSonicPiPath()
 

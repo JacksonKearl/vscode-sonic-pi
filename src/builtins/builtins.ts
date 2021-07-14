@@ -24,7 +24,7 @@ type BuiltIn = {
 	options: {
 		name: string
 		detail: string
-		default: string
+		default?: string
 		can_slide?: boolean
 	}[]
 }

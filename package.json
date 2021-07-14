@@ -20,15 +20,37 @@
 		"onCommand:vscode-sonic-pi.openExamples",
 		"onCommand:vscode-sonic-pi.startserver",
 		"onCommand:vscode-sonic-pi.run",
-		"onCommand:vscode-sonic-pi.runselected"
+		"onCommand:vscode-sonic-pi.runselected",
+		"onCommand:vscode-sonic-pi.newNotebook",
+    "onNotebook:sonic-pi-book"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+    "menus": {
+      "file/newFile": [
+        {
+          "command": "vscode-sonic-pi.newNotebook",
+          "group": "notebook",
+          "title": "Sonic Pi Notebook"
+      }
+      ]
+    },
+    "notebooks": [
+      {
+        "type": "sonic-pi-book",
+        "displayName": "Sonic Pi",
+        "selector": [
+          {
+            "filenamePattern": "*.pibook"
+          }
+        ]
+      }
+    ],
 		"languages": [
 			{
 				"id": "sonic-pi",
 				"aliases": [
-					"Sonic Pi Script",
+					"Sonic Pi",
 					"sonic-pi"
 				],
 				"extensions": [
@@ -43,6 +65,11 @@
 				"title": "Start Server",
 				"category": "Sonic Pi"
 			},
+      {
+        "command": "vscode-sonic-pi.newNotebook",
+        "title": "New Notebook",
+        "category": "Sonic Pi"
+      },
 			{
 				"command": "vscode-sonic-pi.openExamples",
 				"title": "Open Examples",
@@ -181,7 +208,7 @@
 		"@types/chai": "^4.2.15",
 		"@types/mocha": "^8.2.2",
 		"@types/node": "^14.14.37",
-		"@types/vscode": "^1.54.0",
+		"@types/vscode": "^1.58.0",
 		"@typescript-eslint/eslint-plugin": "^4.19.0",
 		"@typescript-eslint/parser": "^4.19.0",
 		"chai": "^4.3.4",
