@@ -11,7 +11,7 @@ export const serializer: vscode.NotebookSerializer = {
 				...book.cells.map((cell) =>
 					cell.kind === vscode.NotebookCellKind.Markup
 						? `${cell.value}`
-						: `|||sonic-pi\n${cell.value}\n|||`.replace('|', '`'),
+						: `|||sonic-pi\n${cell.value}\n|||`.replace(/\|/g, '`'),
 				),
 			].join('\n'),
 		),
@@ -49,23 +49,47 @@ export const serializer: vscode.NotebookSerializer = {
 	},
 }
 
-const executions = new Set<vscode.NotebookCellExecution>()
+type CellWorkingCopy = { content: string; execution: vscode.NotebookCellExecution }
+type NotebookWorkingCopy = { executionHistory: Map<vscode.NotebookCell, CellWorkingCopy> }
+
+const workingCopies = new Map<vscode.NotebookDocument, NotebookWorkingCopy>()
 
 export const handler = (
 	cells: vscode.NotebookCell[],
 	notebook: vscode.NotebookDocument,
 	controller: vscode.NotebookController,
 ): void => {
+	const workingCopy: NotebookWorkingCopy = workingCopies.get(notebook) ?? {
+		executionHistory: new Map<vscode.NotebookCell, CellWorkingCopy>(),
+	}
+
 	for (const cell of cells) {
+		const existingRun = workingCopy.executionHistory.get(cell)
+		if (existingRun) {
+			// Do something to clean up?
+		}
+
 		const execution = controller.createNotebookCellExecution(cell)
-		executions.add(execution)
 		execution.start()
-		const toExecute = cell.document.getText()
+		workingCopy.executionHistory.set(cell, {
+			content: cell.document.getText(),
+			execution,
+		})
+
 		execution.token.onCancellationRequested(() => {
 			stopAllScripts()
-			executions.forEach((e) => e.end(true))
-			executions.clear()
+			for (const cellWorkingCopy of workingCopy.executionHistory.values()) {
+				cellWorkingCopy.execution.end(true)
+			}
+			workingCopy.executionHistory.clear()
 		})
-		runScript(toExecute)
 	}
+
+	const toPlay = notebook
+		.getCells()
+		.map((cell) => workingCopy.executionHistory.get(cell)?.execution)
+		.filter(Boolean)
+		.join('\n')
+
+	runScript(toPlay)
 }

@@ -58,7 +58,6 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 
 	notebookController.supportedLanguages = ['sonic-pi']
-
 	context.subscriptions.push(notebookController)
 
 	context.subscriptions.push(

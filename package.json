@@ -4,13 +4,13 @@
 	"publisher": "jakearl",
 	"description": "Language support and code running for Sonic Pi scripts",
 	"preview": true,
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"repository": {
 		"url": "https://github.com/JacksonKearl/vscode-sonic-pi"
 	},
 	"icon": "img/icon.png",
 	"engines": {
-		"vscode": "^1.54.0"
+		"vscode": "^1.58.0"
 	},
 	"categories": [
 		"Programming Languages"
