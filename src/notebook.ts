@@ -17,6 +17,23 @@ export const serializer: vscode.NotebookSerializer = {
 		),
 	deserializeNotebook: (content) => {
 		const string = Buffer.from(content).toString().replace(header, '')
+
+		if (string.length === 0) {
+			return new vscode.NotebookData([
+				new vscode.NotebookCellData(
+					vscode.NotebookCellKind.Code,
+					`# Pentatonic Bleeps (from https://sonic-pi.net/)
+with_fx :reverb, mix: 0.2 do
+	live_loop :play do
+		play scale(:Eb2, :major_pentatonic, num_octaves: 3).choose, release: 0.1, amp: rand
+		sleep 0.1
+	end
+end`,
+					'sonic-pi',
+				),
+			])
+		}
+
 		let cells: vscode.NotebookCellData[] = []
 
 		let bufferKind: vscode.NotebookCellKind = vscode.NotebookCellKind.Markup
