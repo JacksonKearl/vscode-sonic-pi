@@ -45,6 +45,16 @@ export const serializer: vscode.NotebookSerializer = {
 			}
 		})
 
+		if (bufferContents.length) {
+			cells.push(
+				new vscode.NotebookCellData(
+					bufferKind,
+					bufferContents.join('\n'),
+					bufferKind === vscode.NotebookCellKind.Markup ? 'markdown' : 'sonic-pi',
+				),
+			)
+		}
+
 		return new vscode.NotebookData(cells)
 	},
 }
@@ -76,17 +86,16 @@ export const handler = (
 
 		const execution = controller.createNotebookCellExecution(cell)
 		execution.start()
+		const scriptAsRun = cell.document.getText()
 		workingCopy.executionHistory.set(getKey(cell), {
-			content: cell.document.getText(),
+			content: scriptAsRun,
 			execution,
 		})
 
 		execution.token.onCancellationRequested(() => {
-			stopAllScripts()
-			for (const cellWorkingCopy of workingCopy.executionHistory.values()) {
-				cellWorkingCopy.execution.end(true)
-			}
-			workingCopy.executionHistory.clear()
+			runScript(silenceScript(scriptAsRun))
+			execution.end(true)
+			workingCopy.executionHistory.delete(getKey(cell))
 		})
 	}
 
@@ -98,3 +107,5 @@ export const handler = (
 
 	runScript(toPlay)
 }
+
+const silenceScript = (script: string): string => script.replace(/(live_loop.*?do\n)/g, '$& stop\n')
