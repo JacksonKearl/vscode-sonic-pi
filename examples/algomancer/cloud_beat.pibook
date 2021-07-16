@@ -1,5 +1,7 @@
 > Play this document as a notebook with the [Sonic Pi Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=jakearl.vscode-sonic-pi
 
+
+
 # Cloud Beat
 
 Coded by SonicPit
@@ -32,7 +34,7 @@ define :hihat do
 end
 
 live_loop :hihat_loop do
-  divisors = ring 2, 4, 2, 2, 2, 2, 2, 6
+  divisors = ring 2, 6, 3, 12
   divisors.tick.times do
     hihat
     sleep 1.0 / divisors.look

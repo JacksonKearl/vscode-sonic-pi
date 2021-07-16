@@ -7,7 +7,7 @@ import {
 	SynthCompletionItemProvider,
 } from './completionItems'
 import { HoverProvider } from './HoverProvider'
-import { serializer, handler } from './notebook'
+import { serializer, NotebookController } from './notebook'
 import { activate as activate_runner } from './source-runner/extension'
 
 const selector = { language: 'sonic-pi' }
@@ -50,15 +50,22 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.registerNotebookSerializer('sonic-pi-book', serializer, { transientOutputs: true }),
 	)
 
-	const notebookController = vscode.notebooks.createNotebookController(
+	const notebookController = new NotebookController(
 		'sonic-pi-book-kernel',
 		'sonic-pi-book',
 		'Sonic Pi Player',
-		handler,
 	)
 
-	notebookController.supportedLanguages = ['sonic-pi']
 	context.subscriptions.push(notebookController)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('vscode-sonic-pi.runCell', async () => {
+			const cellUri = vscode.window.activeTextEditor?.document.uri
+			if (cellUri) {
+				notebookController.playCellFromURI(cellUri.toString())
+			}
+		}),
+	)
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('vscode-sonic-pi.newNotebook', async () => {

@@ -20,6 +20,7 @@
 		"onCommand:vscode-sonic-pi.openExamples",
 		"onCommand:vscode-sonic-pi.startserver",
 		"onCommand:vscode-sonic-pi.run",
+		"onCommand:vscode-sonic-pi.runCell",
 		"onCommand:vscode-sonic-pi.runselected",
 		"onCommand:vscode-sonic-pi.newNotebook",
     "onNotebook:sonic-pi-book"
@@ -81,6 +82,11 @@
 				"category": "Sonic Pi"
 			},
 			{
+				"command": "vscode-sonic-pi.runCell",
+				"title": "Run Notebook Cell",
+				"category": "Sonic Pi"
+			},
+			{
 				"command": "vscode-sonic-pi.runselected",
 				"title": "Run selected text",
 				"category": "Sonic Pi"
@@ -100,22 +106,32 @@
 			{
 				"command": "vscode-sonic-pi.run",
 				"key": "F5",
-				"when": "editorLangId=='sonic-pi'"
+				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
 			},
 			{
 				"command": "vscode-sonic-pi.run",
 				"key": "alt+r",
-				"when": "editorLangId=='sonic-pi'"
+				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
+			},
+			{
+				"command": "vscode-sonic-pi.runCell",
+				"key": "F5",
+				"when": "editorLangId=='sonic-pi' && notebookType=='sonic-pi-book'"
+			},
+			{
+				"command": "vscode-sonic-pi.runCell",
+				"key": "alt+r",
+				"when": "editorLangId=='sonic-pi' && notebookType=='sonic-pi-book'"
 			},
 			{
 				"command": "vscode-sonic-pi.runselected",
 				"key": "alt+t",
-				"when": "editorLangId=='sonic-pi'"
+				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
 			},
 			{
 				"command": "vscode-sonic-pi.stop",
 				"key": "alt+s",
-				"when": "editorLangId=='sonic-pi'"
+				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
 			},
 			{
 				"command": "vscode-sonic-pi.togglerecording",

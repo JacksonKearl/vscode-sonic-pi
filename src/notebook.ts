@@ -11,7 +11,7 @@ export const serializer: vscode.NotebookSerializer = {
 				...book.cells.map((cell) =>
 					cell.kind === vscode.NotebookCellKind.Markup
 						? `${cell.value}`
-						: `|||sonic-pi\n${cell.value}\n|||`.replace('|||', '```'),
+						: `\`\`\`sonic-pi\n${cell.value}\n\`\`\``,
 				),
 			].join('\n'),
 		),
@@ -59,37 +59,93 @@ export const serializer: vscode.NotebookSerializer = {
 	},
 }
 
-type CellWorkingCopy = { content: string; execution: vscode.NotebookCellExecution }
-type NotebookWorkingCopy = { executionHistory: Map<string, CellWorkingCopy> }
+type CellWorkingCopy = {
+	content: string
+	execution: vscode.NotebookCellExecution
+	cell: vscode.NotebookCell
+}
+
+type NotebookWorkingCopy = {
+	executionHistory: Map<string, CellWorkingCopy>
+	notebook: vscode.NotebookDocument
+}
 
 const getKey = (thing: vscode.NotebookCell | vscode.NotebookDocument) =>
 	((thing as vscode.NotebookDocument).uri ?? (thing as vscode.NotebookCell).document.uri).toString()
 
-const workingCopies = new Map<string, NotebookWorkingCopy>()
+export class NotebookController {
+	private workingCopies = new Map<string, NotebookWorkingCopy>()
+	private controller: vscode.NotebookController
 
-export const handler = (
-	cells: vscode.NotebookCell[],
-	notebook: vscode.NotebookDocument,
-	controller: vscode.NotebookController,
-): void => {
-	const workingCopy: NotebookWorkingCopy = workingCopies.get(getKey(notebook)) ?? {
-		executionHistory: new Map<string, CellWorkingCopy>(),
+	constructor(id: string, notebookType: string, label: string) {
+		this.controller = vscode.notebooks.createNotebookController(
+			id,
+			notebookType,
+			label,
+			this.handler.bind(this),
+		)
+
+		this.controller.supportedLanguages = ['sonic-pi']
 	}
 
-	workingCopies.set(notebook.uri.toString(), workingCopy)
+	dispose() {
+		this.controller.dispose()
+	}
 
-	for (const cell of cells) {
-		const existingRun = workingCopy.executionHistory.get(getKey(cell))
-		if (existingRun) {
-			// Do something to clean up?
+	playCellFromURI(cellUri: string) {
+		let notebook: vscode.NotebookDocument | undefined = undefined
+		let cell: vscode.NotebookCell | undefined = undefined
+		for (const notebookWorkingCopy of this.workingCopies.values()) {
+			const cellWorkingCopy = notebookWorkingCopy.executionHistory.get(cellUri)
+			if (cellWorkingCopy) {
+				notebook = notebookWorkingCopy.notebook
+				cell = cellWorkingCopy.cell
+			}
 		}
 
-		const execution = controller.createNotebookCellExecution(cell)
+		if (!notebook || !cell) {
+			throw Error(
+				'Can not find cell... please use the run button for first play of a cell rather than keybindings!',
+			)
+		}
+
+		this.queueCell(notebook, cell)
+		this.triggerPlay(notebook)
+	}
+
+	private handler(cells: vscode.NotebookCell[], notebook: vscode.NotebookDocument): void {
+		const workingCopy: NotebookWorkingCopy = this.workingCopies.get(getKey(notebook)) ?? {
+			executionHistory: new Map<string, CellWorkingCopy>(),
+			notebook,
+		}
+
+		this.workingCopies.set(notebook.uri.toString(), workingCopy)
+
+		for (const cell of cells) {
+			this.queueCell(notebook, cell)
+		}
+
+		this.triggerPlay(notebook)
+	}
+
+	private queueCell(notebook: vscode.NotebookDocument, cell: vscode.NotebookCell) {
+		const workingCopy: NotebookWorkingCopy = this.workingCopies.get(getKey(notebook)) ?? {
+			executionHistory: new Map<string, CellWorkingCopy>(),
+			notebook,
+		}
+
+		const existingRun = workingCopy.executionHistory.get(getKey(cell))
+		if (existingRun) {
+			existingRun.execution.end(true)
+		}
+
+		const execution = this.controller.createNotebookCellExecution(cell)
 		execution.start()
 		const scriptAsRun = cell.document.getText()
 		workingCopy.executionHistory.set(getKey(cell), {
 			content: scriptAsRun,
 			execution,
+			cell,
 		})
 
 		execution.token.onCancellationRequested(() => {
@@ -99,13 +155,20 @@ export const handler = (
 		})
 	}
 
-	const toPlay = notebook
-		.getCells()
-		.map((cell) => workingCopy.executionHistory.get(getKey(cell))?.content)
-		.filter(Boolean)
-		.join('\n')
+	private triggerPlay(notebook: vscode.NotebookDocument) {
+		const workingCopy: NotebookWorkingCopy = this.workingCopies.get(getKey(notebook)) ?? {
+			executionHistory: new Map<string, CellWorkingCopy>(),
+			notebook,
+		}
 
-	runScript(toPlay)
+		const toPlay = notebook
+			.getCells()
+			.map((cell) => workingCopy.executionHistory.get(getKey(cell))?.content)
+			.filter((x): x is string => x !== undefined)
+			.join('\n')
+
+		runScript(toPlay)
+	}
 }
 
-const silenceScript = (script: string): string => script.replace(/(live_loop.*?do\n)/g, '$& stop\n')
+const silenceScript = (script: string): string => script.replace(/live_loop.*?do\n/g, '$& stop\n')
