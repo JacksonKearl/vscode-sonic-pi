@@ -255,43 +255,43 @@ export class Main {
 		})
 		osc.open()
 		osc.on('/log/info', (message: { args: any }) => {
-			console.log('Got /log/info' + ' -> ' + message.args[0] + ', ' + message.args[1])
+			// console.log('Got /log/info' + ' -> ' + message.args[0] + ', ' + message.args[1])
 			this.log(message.args[1])
 		})
 
 		osc.on('/incoming/osc', (message: { args: any }) => {
-			console.log(
-				'Got /incoming/osc' +
-					' -> ' +
-					message.args[0] +
-					', ' +
-					message.args[1] +
-					', ' +
-					message.args[2] +
-					', ' +
-					message.args[3],
-			)
+			// console.log(
+			// 	'Got /incoming/osc' +
+			// 		' -> ' +
+			// 		message.args[0] +
+			// 		', ' +
+			// 		message.args[1] +
+			// 		', ' +
+			// 		message.args[2] +
+			// 		', ' +
+			// 		message.args[3],
+			// )
 			this.cueLog(message.args[2] + ': ' + message.args[3])
 		})
 
 		osc.on('/log/multi_message', (message: any) => {
-			console.log('Got /log/multi_message')
+			// console.log('Got /log/multi_message')
 			this.processMultiMessage(message)
 		})
 
 		osc.on('/syntax_error', (message: { args: any }) => {
-			console.log(
-				'Got /syntax_error' +
-					message.args[0] +
-					', ' +
-					message.args[1] +
-					', ' +
-					message.args[2] +
-					', ' +
-					message.args[3] +
-					', ' +
-					message.args[4],
-			)
+			// console.log(
+			// 	'Got /syntax_error' +
+			// 		message.args[0] +
+			// 		', ' +
+			// 		message.args[1] +
+			// 		', ' +
+			// 		message.args[2] +
+			// 		', ' +
+			// 		message.args[3] +
+			// 		', ' +
+			// 		message.args[4],
+			// )
 			this.processSyntaxError(message)
 		})
 

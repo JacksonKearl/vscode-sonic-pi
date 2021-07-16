@@ -11,7 +11,7 @@ export const serializer: vscode.NotebookSerializer = {
 				...book.cells.map((cell) =>
 					cell.kind === vscode.NotebookCellKind.Markup
 						? `${cell.value}`
-						: `|||sonic-pi\n${cell.value}\n|||`.replace(/\|/g, '`'),
+						: `|||sonic-pi\n${cell.value}\n|||`.replace('|||', '```'),
 				),
 			].join('\n'),
 		),
@@ -50,28 +50,33 @@ export const serializer: vscode.NotebookSerializer = {
 }
 
 type CellWorkingCopy = { content: string; execution: vscode.NotebookCellExecution }
-type NotebookWorkingCopy = { executionHistory: Map<vscode.NotebookCell, CellWorkingCopy> }
+type NotebookWorkingCopy = { executionHistory: Map<string, CellWorkingCopy> }
 
-const workingCopies = new Map<vscode.NotebookDocument, NotebookWorkingCopy>()
+const getKey = (thing: vscode.NotebookCell | vscode.NotebookDocument) =>
+	((thing as vscode.NotebookDocument).uri ?? (thing as vscode.NotebookCell).document.uri).toString()
+
+const workingCopies = new Map<string, NotebookWorkingCopy>()
 
 export const handler = (
 	cells: vscode.NotebookCell[],
 	notebook: vscode.NotebookDocument,
 	controller: vscode.NotebookController,
 ): void => {
-	const workingCopy: NotebookWorkingCopy = workingCopies.get(notebook) ?? {
-		executionHistory: new Map<vscode.NotebookCell, CellWorkingCopy>(),
+	const workingCopy: NotebookWorkingCopy = workingCopies.get(getKey(notebook)) ?? {
+		executionHistory: new Map<string, CellWorkingCopy>(),
 	}
 
+	workingCopies.set(notebook.uri.toString(), workingCopy)
+
 	for (const cell of cells) {
-		const existingRun = workingCopy.executionHistory.get(cell)
+		const existingRun = workingCopy.executionHistory.get(getKey(cell))
 		if (existingRun) {
 			// Do something to clean up?
 		}
 
 		const execution = controller.createNotebookCellExecution(cell)
 		execution.start()
-		workingCopy.executionHistory.set(cell, {
+		workingCopy.executionHistory.set(getKey(cell), {
 			content: cell.document.getText(),
 			execution,
 		})
@@ -87,7 +92,7 @@ export const handler = (
 
 	const toPlay = notebook
 		.getCells()
-		.map((cell) => workingCopy.executionHistory.get(cell)?.execution)
+		.map((cell) => workingCopy.executionHistory.get(getKey(cell))?.content)
 		.filter(Boolean)
 		.join('\n')
 

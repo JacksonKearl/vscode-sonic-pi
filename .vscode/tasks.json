@@ -24,6 +24,9 @@
 			},
 			"command": "npx tsc --watch",
 			"problemMatcher": "$tsc-watch",
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
 			"isBackground": true,
 		},
 	]

@@ -1,6 +1,5 @@
 > Play this document as a notebook with the [Sonic Pi Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=jakearl.vscode-sonic-pi
 
-
 # Cloud Beat
 
 Coded by SonicPit
@@ -12,37 +11,34 @@ Note > requires a powerful machine to run smoothly.
 
 Translated to notebook by Jackson Kearl
 
-use_bpm 100
-
-# HISS
 # Setup
+```sonic-pi
+use_bpm 100
+```
+# HISS
 ```sonic-pi
 live_loop :hiss_loop do
   sample :vinyl_hiss, amp: 2
   sleep sample_duration :vinyl_hiss
 end
 ```
-
-
 # HIHAT
 ```sonic-pi
 define :hihat do
   use_synth :pnoise
-  with_fx :hpf, cutoff: rrand(80, 130) do
+  with_fx :hpf, cutoff: 120 do
     play release: 0.01, amp: 13
   end
 end
 
 live_loop :hihat_loop do
-  divisors = ring 2, 3, 4, 5, 6
+  divisors = ring 2, 4, 2, 2, 2, 2, 2, 6
   divisors.tick.times do
     hihat
     sleep 1.0 / divisors.look
   end
 end
 ```
-
-
 # SNARE
 ```sonic-pi
 live_loop :snare_loop do
@@ -53,11 +49,9 @@ live_loop :snare_loop do
   sleep ring(1.5, 1)[look]
 end
 ```
-
-
 # BASSDRUM
 ```sonic-pi
-define :bassdrum do `note1, duration, note2 = note1`
+define :bassdrum do |note1, duration, note2 = note1|
   use_synth :sine
   with_fx :hpf, cutoff: 100 do
     play note1 + 24, amp: 40, release: 0.01
@@ -84,8 +78,6 @@ live_loop :bassdrum_schleife do
   bassdrum 36, 1.0, ring(10, 10, 10, 40)[look]
 end
 ```
-
-
 # CHORD CONTROL
 ```sonic-pi
 # This part provides two rings called "chord_high" and "chord_low".
@@ -112,9 +104,9 @@ live_loop :chord_selector, delay: -0.5 do
 end
 
 # SPHERES
-define :chord_player do `the_chord`
+define :chord_player do |the_chord|
   use_synth :blade
-  the_chord.each do `note`
+  the_chord.each do |note|
     play note, attack: rand(4), release: rand(6..8), cutoff: rand(50..85), vibrato_rate: rand(0.01..2), amp: 0.55
   end
 end
@@ -127,3 +119,13 @@ with_fx :reverb, room: 0.99, mix: 0.7 do
   end
 end
 ```
+
+Coded by Pit Noack
+
+supported by:
+- Alexander Degraf
+- Astrid Hagenguth
+- Enrico Mercaldi
+
+http://www.maschinennah.de/
+mail@pitnoack.de
