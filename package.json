@@ -97,6 +97,11 @@
 				"category": "Sonic Pi"
 			},
 			{
+				"command": "vscode-sonic-pi.stopNotebook",
+				"title": "Stop Notebook",
+				"category": "Sonic Pi"
+			},
+			{
 				"command": "vscode-sonic-pi.togglerecording",
 				"title": "Toggle recording",
 				"category": "Sonic Pi"
@@ -123,6 +128,11 @@
 				"key": "alt+r",
 				"when": "editorLangId=='sonic-pi' && notebookType=='sonic-pi-book'"
 			},
+      {
+        "command": "vscode-sonic-pi.stopNotebook",
+        "key": "alt+s",
+        "when": "notebookType=='sonic-pi-book'"
+      },
 			{
 				"command": "vscode-sonic-pi.runselected",
 				"key": "alt+t",

@@ -68,6 +68,15 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 
 	context.subscriptions.push(
+		vscode.commands.registerCommand('vscode-sonic-pi.stopNotebook', async () => {
+			const cellUri = vscode.window.activeTextEditor?.document.uri
+			if (cellUri) {
+				notebookController.stopNotebook(cellUri.toString())
+			}
+		}),
+	)
+
+	context.subscriptions.push(
 		vscode.commands.registerCommand('vscode-sonic-pi.newNotebook', async () => {
 			await vscode.commands.executeCommand('workbench.action.files.newUntitledFile', {
 				viewType: 'sonic-pi-book',

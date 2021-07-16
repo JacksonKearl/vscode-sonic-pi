@@ -109,6 +109,19 @@ export class NotebookController {
 		this.controller.dispose()
 	}
 
+	stopNotebook(cellUri: string) {
+		for (const notebookWorkingCopy of this.workingCopies.values()) {
+			const cellWorkingCopy = notebookWorkingCopy.executionHistory.get(cellUri)
+			if (cellWorkingCopy) {
+				for (const entry of notebookWorkingCopy.executionHistory.values()) {
+					entry.execution.end(true)
+				}
+			}
+			stopAllScripts()
+			notebookWorkingCopy.executionHistory.clear()
+		}
+	}
+
 	playCellFromURI(cellUri: string) {
 		let notebook: vscode.NotebookDocument | undefined = undefined
 		let cell: vscode.NotebookCell | undefined = undefined
