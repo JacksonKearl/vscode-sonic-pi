@@ -1,0 +1,583 @@
+> Play this document as a notebook with the [Sonic Pi Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=jakearl.vscode-sonic-pi
+
+> The content in this file is copyright Sam Aaron with all rights reserved and is included in this branch for dempnstration purposes only. License available at https://github.com/sonic-pi-net/sonic-pi/blob/main/LICENSE.md
+
+# Synths
+
+OK, enough of the intros - let's get into some sound.
+
+In this section we'll cover the basics of triggering and manipulating
+synths. Synth is short for synthesiser which is a fancy word for
+something which creates sounds. Typically synths are quite complicated
+to use - especially analog synths such as Eurorack modules connected
+together by a mess of wires. However, Sonic Pi gives you much of that
+power in a very simple and approachable manner.
+
+Don't be fooled by the immediate simplicity of Sonic Pi's interface. You
+can get very deep into very sophisticated sound manipulation if that's
+your thing. Hold on to your hats...
+
+
+## Your First Beeps
+
+Take a look at the following code:
+
+```
+play 70
+```
+
+This is where it all starts. Go ahead, copy and paste it into the code
+window at the top of the app (the big white space under the Run
+button). Now, press Run...
+
+### Beep!
+
+Intense. Press it again. And again. *And again...*
+
+Woah, crazy, I'm sure you could keep doing that all day. But wait,
+before you lose yourself in an infinite stream of beeps, try changing
+the number:
+
+```
+play 75
+```
+
+Can you hear the difference? Try a lower number:
+
+```
+play 60
+```
+
+So, lower numbers make lower pitched beeps and higher numbers make
+higher pitched beeps. Just like on a piano, the keys at the lower part
+of the piano (the left hand side) play lower notes and the keys on the
+higher part of the piano (the right hand side) play higher notes.
+
+It turns out that the C of the 4th octave (C in English notation) is identified by the number 60. `play 60` therefore plays the C of the 4th octave. To play the next piano key to the right, you have to add 1 to 60 and then type `play 61`, which in this case is the black key of the C sharp. To play the D, the next key to the right, `play 62`.
+
+*Don't worry* if this means nothing to you - it didn't to me when I
+first started. All that matters right now is that you know that *low
+numbers make lower beeps* and *high numbers make higher beeps*.
+
+### Chords
+
+Playing a note is quite fun, but playing many at the same time can be
+even better. Try it:
+
+```
+play 72
+play 75
+play 79
+```
+
+Jazzy! So, when you write multiple `play`s, they all play at the same
+time. Try it for yourself - which numbers sound good together? Which
+sound terrible? Experiment, explore and find out for yourself.
+
+### Melody
+
+So, playing notes and chords is fun - but how about a melody? What if
+you wanted to play one note after another and not at the same time?
+Well, that's easy, you just need to `sleep` between the notes:
+
+```
+play 72
+sleep 1
+play 75
+sleep 1
+play 79
+```
+
+How lovely, a little arpeggio. So what does the `1` mean in `sleep 1`?
+Well it means the *duration of the sleep*. It actually means sleep for
+one beat, but for now we can think about it as sleeping for 1
+second. So, what if we wanted to make our arpeggio a little faster?
+Well, we need to use shorter sleep values. What about a half i.e. `0.5`:
+
+```
+play 72
+sleep 0.5
+play 75
+sleep 0.5
+play 79
+```
+
+Notice how it plays faster. Now, try for yourself, change the times -
+use different times and notes.
+
+One thing to try is in-between notes such as `play 52.3` and `play 52.63`.
+There's absolutely no need to stick to standard whole notes. Play
+around and have fun.
+
+
+### Traditional Note Names
+
+For those of you that already know some musical notation (don't worry if
+you don't - you don't need it to have fun) you might want to write a
+melody using note names such as C and F# rather than numbers. Sonic Pi
+has you covered. You can do the following:
+
+```
+play :C
+sleep 0.5
+play :D
+sleep 0.5
+play :E
+```
+
+Remember to put the colon `:` in front of your note name so that it
+goes pink. Also, you can specify the octave by adding a number after
+the note name:
+
+```
+play :C3
+sleep 0.5
+play :D3
+sleep 0.5
+play :E4
+```
+
+If you want to make a note sharp, add an `s` after the note name such as
+`play :Fs3` and if you want to make a note flat, add a `b` such as `play :Eb3`.
+
+Now go *crazy* and have fun making your own tunes.
+
+
+## Synth Options: Amp and Pan
+
+As well as allowing you to control which note to play or which sample to
+trigger, Sonic Pi provides a whole range of options to craft and
+control the sounds. We'll be covering many of these in this tutorial and
+there's extensive documentation for each in the help system. However,
+for now we'll introduce two of the most useful: *amplitude* and *pan*.
+First, let's look at what options actually are.
+
+
+### Options
+
+Sonic Pi supports the notion of options (or opts for short) for its
+synths. Opts are controls you pass to `play` which modify and
+control aspects of the sound you hear. Each synth has its own set of
+opts for finely tuning its sound. However, there are common sets
+of opts shared by many sounds such as `amp:` and envelope
+opts (covered in another section).
+
+Opts have two major parts, their name (the name of the control) and
+their value (the value you want to set the control at). For example, you
+might have an opt called `cheese:` and want to set it with a value
+of `1`.
+
+Opts are passed to calls to `play` by using a comma
+`,` and then the name of the opt such as `amp:` (don't forget the
+colon `:`) and then a space and the value of the opt. For example:
+
+```
+play 50, cheese: 1
+```
+
+(Note that `cheese:` isn't a valid opt, we're just using it as an example).
+
+You can pass multiple opts by separating them with a comma:
+
+```
+play 50, cheese: 1, beans: 0.5
+```
+
+The order of the opts doesn't matter, so the following is identical:
+
+```
+play 50, beans: 0.5, cheese: 1
+```
+
+Opts that aren't recognised by the synth are just ignored (like
+`cheese` and `beans` which are clearly ridiculous opt names!)
+
+If you accidentally use the same opt twice with different values, the
+last one wins. For example, `beans:` here will have the value 2 rather
+than 0.5:
+
+```
+play 50, beans: 0.5, cheese: 3, eggs: 0.1, beans: 2
+```
+
+Many things in Sonic Pi accept opts, so just spend a little time
+learning how to use them and you'll be set! Let's play with our first
+opt: `amp:`.
+
+### Amplitude
+
+Amplitude is a computer representation of the loudness of a sound. A
+*high amplitude produces a loud sound* and a *low amplitude produces a
+quiet sound*. Just as Sonic Pi uses numbers to represent time and notes,
+it uses numbers to represent amplitude. An amplitude of 0 is silent
+(you'll hear nothing) whereas an amplitude of 1 is normal volume. You
+can even crank up the amplitude higher to 2, 10, 100. However, you
+should note that when the overall amplitude of all the sounds gets too
+high, Sonic Pi uses what's called a compressor to squash them all to
+make sure things aren't too loud for your ears. This can often make the
+sound muddy and strange. So try to use low amplitudes, i.e. in the range
+0 to 0.5 to avoid compression.
+
+
+### Amp it up
+
+To change the amplitude of a sound, you can use the `amp:`
+opt. For example, to play at half amplitude pass 0.5:
+
+```
+play 60, amp: 0.5
+```
+
+To play at double amplitude pass 2:
+
+```
+play 60, amp: 2
+```
+
+The `amp:` opt only modifies the call to `play` it's associated
+with. So, in this example, the first call to play is at half volume and
+the second is back to the default (1):
+
+```
+play 60, amp: 0.5
+sleep 0.5
+play 65
+```
+
+Of course, you can use different `amp:` values for each call to play:
+
+```
+play 50, amp: 0.1
+sleep 0.25
+play 55, amp: 0.2
+sleep 0.25
+play 57, amp: 0.4
+sleep 0.25
+play 62, amp: 1
+```
+
+### Panning
+
+Another fun opt to use is `pan:` which controls the panning of a
+sound in stereo. Panning a sound to the left means that you hear it out
+of the left speaker, and panning it to the right means you hear it out
+of your right speaker. For our values, we use a -1 to represent fully
+left, 0 to represent center and 1 to represent fully right in the stereo
+field. Of course, we're free to use any value between -1 and 1 to
+control the exact positioning of our sound.
+
+Let's play a beep out of the left speaker:
+
+```
+play 60, pan: -1
+```
+
+Now, let's play it out of the right speaker:
+
+```
+play 60, pan: 1
+```
+
+Finally let's play it back out of the center of both (the default
+position):
+
+```
+play 60, pan: 0
+```
+
+Now, go and have fun changing the amplitude and panning of your sounds!
+
+## Switching Synths
+
+So far we've had quite a lot of fun making beeps. However, you're
+probably starting to get bored of the basic beep noise. Is that all
+Sonic Pi has to offer? Surely there's more to live coding than just
+playing beeps? Yes there is, and in this section we'll explore some of
+the exciting range of sounds that Sonic Pi has to offer.
+
+### Synths
+
+Sonic Pi has a number of different instruments it calls synths (which is
+*short for synthesisers*). Whereas samples represent pre-recorded
+sounds, synths are capable of generating new sounds depending on how you
+control them (which we'll explore later in this tutorial). Sonic Pi's
+synths are very powerful and expressive and you'll have a lot of fun
+exploring and playing with them. First, let's learn how to select the
+current synth to use.
+
+### Buzzy saws and prophets
+
+A fun sound is the *saw wave* - let's give it a try:
+
+```
+use_synth :saw
+play 38
+sleep 0.25
+play 50
+sleep 0.25
+play 62
+```
+
+Let's try another sound - the *prophet*:
+
+```
+use_synth :prophet
+play 38
+sleep 0.25
+play 50
+sleep 0.25
+play 62
+```
+
+How about combining two sounds. First one after another:
+
+```
+use_synth :saw
+play 38
+sleep 0.25
+play 50
+sleep 0.25
+use_synth :prophet
+play 57
+```
+
+Now multiple sounds at the same time (by not sleeping between successive
+calls to `play`):
+
+```
+use_synth :tb303
+play 38
+use_synth :dsaw
+play 50
+use_synth :prophet
+play 57
+```
+
+Notice that the `use_synth` command only affects the following calls to
+`play`. Think of it like a *big switch* - new calls to `play` will play
+whatever synth it's currently pointing to. You can move the switch to a
+new synth with `use_synth`.
+
+
+### Discovering Synths
+
+To see which synths Sonic Pi has for you to play with take a look at the
+Synths option in the menu at the bottom of this help screen (between Examples & Fx). There are
+over 20 to choose from. Here are a few of my favourites:
+
+* `:prophet`
+* `:dsaw`
+* `:fm`
+* `:tb303`
+* `:pulse`
+
+Now play around with *switching synths during your music*. Have fun
+combining synths to make new sounds as well as using different synths
+for different sections of your music.
+
+## Duration with Envelopes
+
+In an earlier section, we looked at how we can use the `sleep` command
+to control when to trigger our sounds. However, we haven't yet been able
+to control the duration of our sounds.
+
+In order to give us a simple, yet powerful means of *controlling the
+duration* of our sounds, Sonic Pi provides the notion of an *ADSR
+amplitude envelope* (we'll cover what ADSR means later in this
+section). An amplitude envelope offers two useful aspects of control:
+
+* control over the duration of a sound
+* control over the amplitude of a sound
+
+### Duration
+
+The duration is the length the sound lasts for. A longer duration means
+that you hear the sound for longer. Sonic Pi's sounds all have a
+controllable amplitude envelope, and the total duration of that envelope
+is the duration of the sound. Therefore, by controlling the envelope you
+control the duration.
+
+### Amplitude
+
+The ADSR envelope not only controls duration, it also gives you *fine
+control over the amplitude of the sound*. All audible sounds start and
+end silent and contain some non-silent part in-between. Envelopes allow
+you to slide and hold the amplitude of non-silent parts of the
+sound. It's like giving someone instructions on how to turn up and down
+the volume of a guitar amplifier. For example you might ask someone to
+"start at silence, slowly move up to full volume, hold it for a bit,
+then quickly fall back to silence." Sonic Pi allows you to program
+exactly this behaviour with envelopes.
+
+Just to recap, as we have seen before, an amplitude of 0 is silence and
+an amplitude of 1 is normal volume.
+
+Now, let us look at each of the parts of the envelopes in turn.
+
+### Release Phase
+
+The only part of the envelope that's used by default is the release
+time. This is the time it takes for the synth's sound to fade out. All
+synths have a release time of 1 which means that by default they have a
+duration of 1 beat (which at the default BPM of 60 is 1 second):
+
+```
+play 70
+```
+
+The note will be audible for 1 second.  Go ahead and time it :-) This is
+short hand for the longer more explicit version:
+
+```
+play 70, release: 1
+```
+
+Notice how this sounds exactly the same (the sound lasts for one
+second). However, it's now very easy to change the duration by modifying
+the value of the `release:` opt:
+
+```
+play 60, release: 2
+```
+
+We can make the synth sound for a very short amount of time by using a
+very small release time:
+
+```
+play 60, release: 0.2
+```
+
+The duration of the release of the sound is called the *release phase*
+and by default is a linear transition (i.e. a straight line). The
+following diagram illustrates this transition:
+
+![release envelope](./img/env-release.png)
+
+The vertical line at the far left of the diagram shows that the sound
+starts at 0 amplitude, but goes up to full amplitude immediately (this
+is the attack phase which we'll cover next). Once at full amplitude it
+then moves in a straight line down to zero taking the amount of time
+specified by `release:`. *Longer release times produce longer synth
+fade outs.*
+
+You can therefore change the duration of your sound by changing the
+release time. Have a play adding release times to your music.
+
+### Attack Phase
+
+By default, the *attack phase* is 0 for all synths which means they move
+from 0 amplitude to 1 immediately. This gives the synth an initial
+percussive sound. However, you may wish to fade your sound in. This can
+be achieved with the `attack:` opt. Try fading in some sounds:
+
+```
+play 60, attack: 2
+sleep 3
+play 65, attack: 0.5
+```
+
+You may use multiple opts at the same time. For example for a short
+attack and a long release try:
+
+```
+play 60, attack: 0.7, release: 4
+```
+
+This short attack and long release envelope is illustrated in the
+following diagram:
+
+![attack release envelope](./img/env-attack-release.png)
+
+Of course, you may switch things around. Try a long attack and a short
+release:
+
+```
+play 60, attack: 4, release: 0.7
+```
+
+![long attack short release envelope](./img/env-long-attack-short-release.png)
+
+Finally, you can also have both short attack and release times for
+shorter sounds.
+
+```
+play 60, attack: 0.5, release: 0.5
+```
+
+![short attack short release envelope](./img/env-short-attack-short-release.png)
+
+### Sustain Phase
+
+In addition to specifying attack and release times, you may also specify
+a sustain time to control the *sustain phase*. This is the time for
+which the sound is maintained at full amplitude between the attack and
+release phases.
+
+```
+play 60, attack: 0.3, sustain: 1, release: 1
+```
+
+![ASR envelope](./img/env-attack-sustain-release.png)
+
+The sustain time is useful for important sounds you wish to give full
+presence in the mix before entering an optional release phase. Of
+course, it's totally valid to set both the `attack:` and `release:` opts
+to 0 and just use the sustain to have absolutely no fade in or fade out
+to the sound. However, be warned, a release of 0 can produce clicks in
+the audio and it's often better to use a very small value such as 0.2.
+
+### Decay Phase
+
+For an extra level of control, you can also specify a decay time. This
+is a phase of the envelope that fits between the attack and sustain
+phases and specifies a time where the amplitude will drop from the
+`attack_level:` to the `decay_level:` (which unless you explicitly set
+it will be set to the `sustain_level:`). By default, the `decay:` opt is
+0 and both the attack and sustain levels are 1 so you'll need to specify
+them for the decay time to have any effect:
+
+```
+play 60, attack: 0.1, attack_level: 1, decay: 0.2, sustain_level: 0.4, sustain: 1, release: 0.5
+```
+
+![ADSR envelope](./img/env-attack-decay-sustain-release.png)
+
+### Decay Level
+
+One last trick is that although the `decay_level:` opt defaults to be
+the same value as `sustain_level:` you can explicitly set them to
+different values for full control over the envelope. This allows you to
+to create envelopes such as the following:
+
+```
+play 60, attack: 0.1, attack_level: 1, decay: 0.2, decay_level: 0.3, sustain: 1, sustain_level: 0.4, release: 0.5
+```
+
+![ASR envelope](./img/env-decay-level.png)
+
+It's also possible to set the `decay_level:` to be higher than `sustain_level:`:
+
+```
+play 60, attack: 0.1, attack_level: 0.1, decay: 0.2, decay_level: 1, sustain: 0.5, sustain_level: 0.8, release: 1.5
+```
+
+![ASR envelope](./img/env-decay-level-2.png)
+
+### ADSR Envelopes
+
+So to summarise, Sonic Pi's ADSR envelopes have the following phases:
+
+1. *attack* - time from 0 amplitude to the `attack_level`,
+2. *decay* - time to move amplitude from `attack_level` to `decay_level`,
+3. *sustain* - time to move the amplitude from `decay_level` to `sustain_level`,
+4. *release* - time to move amplitude from `sustain_level` to 0
+
+It's important to note that the duration of a sound is the summation of
+the times of each of these phases. Therefore the following sound will
+have a duration of 0.5 + 1 + 2 + 0.5 = 4 beats:
+
+```
+play 60, attack: 0.5, attack_level: 1, decay: 1, sustain_level: 0.4, sustain: 2, release: 0.5
+```
+
+Now go and have a play adding envelopes to your sounds...

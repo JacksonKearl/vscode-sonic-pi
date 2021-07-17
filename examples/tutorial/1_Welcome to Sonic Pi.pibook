@@ -1,0 +1,185 @@
+> Play this document as a notebook with the [Sonic Pi Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=jakearl.vscode-sonic-pi
+
+> The content in this file is copyright Sam Aaron with all rights reserved and is included in this branch for dempnstration purposes only. License available at https://github.com/sonic-pi-net/sonic-pi/blob/main/LICENSE.md
+
+# Welcome to Sonic Pi
+
+## Welcome friend :-)
+
+Welcome to Sonic Pi. Hopefully you're as excited to get started making
+crazy sounds as I am to show you. It's going to be a really *fun* ride
+where you'll learn all about music, synthesis, programming, composition,
+performance and more.
+
+But wait, how rude of me! Let me introduce myself - I'm
+[Sam Aaron](https://twitter.com/samaaron) - the chap that created Sonic
+Pi. You can find me at [@samaaron](http://twitter.com/samaaron) on
+Twitter and I'd be more than happy to say hello to you.  You might also
+be interested in finding out more about my
+[Live Coding Performances](https://youtube.com/samaaron) where
+I code with Sonic Pi live in front of audiences.
+
+If you have any thoughts, or ideas for improving Sonic Pi - please pass
+them on - feedback is so helpful. You never know, your idea might be the
+next big feature!
+
+This tutorial is divided up into sections grouped by category. Whilst
+I've written it to have an easy learning progression from start to
+finish, feel very free just to dip in and out of sections as you see
+fit. If you feel that there's something missing, do let me know and I'll
+consider it for a future version.
+
+Finally, watching others live code is a really great way to learn. I
+regularly stream live on
+[https://youtube.com/samaaron](http://youtube.com/samaaron) so please do
+drop by, say hi and ask me lots of questions :-)
+
+OK, let's get started...
+
+## Live Coding
+
+One of the most exciting aspects of Sonic Pi is that it enables you to
+write and *modify code live* to make music, just like you might perform
+live with a guitar. This means that given some practice you can take
+Sonic Pi on stage and gig with it.
+
+### Free your mind
+
+Before we get into the real details of how Sonic Pi works in the rest of
+this tutorial, I'd like to give you an experience of what it's like to
+live code. Don't worry if you don't understand much (or any) of
+this. Just try to hold onto your seats and enjoy...
+
+### A live loop
+
+Let's get started, consider the following cell:
+
+```
+live_loop :flibble do
+  sample :bd_haus, rate: 1
+  sleep 0.5
+end
+```
+
+Now, press the `Run` button and you'll hear a nice fast bass drum
+beating away. If at any time you wish to stop the sound just hit the
+`Stop` button. Although don't hit it just yet... Instead, follow these steps:
+
+1. Make sure the bass drum sound is still running
+2. Change the `sleep` value from `0.5` to something higher like `1`.
+3. Press the `Run` button again
+4. Notice how the drum speed has changed.
+5. Finally, *remember this moment*, this is the first time you've live
+   coded with Sonic Pi and it's unlikely to be your last...
+
+Ok, that was simple enough. Let's add something else into the mix:
+
+```
+live_loop :flibble do
+  sample :ambi_choir, rate: 0.3
+  sample :bd_haus, rate: 1
+  sleep 1
+end
+```
+
+Now, play around. Change the rates - what happens when you use high
+values, or small values or negative values? See what happens when you
+change the `rate:` value for the `:ambi_choir` sample just slightly (say
+to `0.29`). What happens if you choose a really small `sleep` value? See
+if you can make it go so fast your computer will stop with an error
+because it can't keep up (if that happens, just choose a bigger `sleep`
+time and hit `Run` again).
+
+Try commenting one of the `sample` lines out by adding a `#` to the
+beginning:
+
+```
+live_loop :flibble do
+  sample :ambi_choir, rate: 0.3
+#  sample :bd_haus, rate: 1
+  sleep 1
+end
+```
+
+Notice how it tells the computer to ignore it, so we don't hear it. This
+is called a comment. In Sonic Pi we can use comments to remove and add
+things into the mix.
+
+Finally, let me leave you something fun to play with. Take the code below,
+and copy it into a spare buffer. Now, don't try to understand it too
+much other than see that there are two loops - so two things going round
+at the same time. Now, do what you do best - experiment and play
+around. Here are some suggestions:
+
+* Try changing the blue `rate:` values to hear the sample sound change.
+* Try changing the `sleep` times and hear that both loops can spin round
+  at different rates.
+* Try uncommenting the sample line (remove the `#`) and enjoy the sound
+  of the guitar played backwards.
+* Try changing any of the blue `mix:` values to numbers between `0` (not
+  in the mix) and `1` (fully in the mix).
+
+Remember to press `Run` and you'll hear the change next time the loop
+goes round. If you end up in a pickle, don't worry - hit `Stop`, delete
+the code in the buffer and paste a fresh copy in and you're ready to
+jam again. Making mistakes is how you'll learn the quickest...
+
+
+```
+live_loop :guit do
+  with_fx :echo, mix: 0.3, phase: 0.25 do
+    sample :guit_em9, rate: 0.5
+  end
+#  sample :guit_em9, rate: -0.5
+  sleep 8
+end
+
+live_loop :boom do
+  with_fx :reverb, room: 1 do
+    sample :bd_boom, amp: 10, rate: 1
+  end
+  sleep 8
+end
+```
+
+Now, keep playing and experimenting until your curiosity about how this
+all actually works kicks in and you start wondering what else you can do
+with this. You're now ready to read the rest of the tutorial.
+
+So what are you waiting for...
+
+## Learning through Play
+
+Sonic Pi encourages you to learn about both computing and music through
+play and experimentation. The most important thing is that you're having
+fun, and before you know it you'll have accidentally learned how to
+code, compose and perform.
+
+### There are no mistakes
+
+Whilst we're on this subject, let me just give you one piece of advice
+I've learned over my years of live coding with music - *there are no
+mistakes, only opportunities*. This is something I've often heard in
+relation to jazz but it works equally well with live coding. No matter
+how experienced you are - from a complete beginner to a seasoned
+live coder, you'll run some code that has a completely unexpected
+outcome. It might sound insanely cool - in which case run with
+it. However, it might sound totally jarring and out of place. It doesn't
+matter that it happened - what matters is what you do next with it. Take
+the sound, manipulate it and morph it into something awesome. The crowd
+will go *wild*.
+
+### Start Simple
+
+When you're learning, it's tempting to want to do amazing things
+*now*. However, just hold that thought and see it as a distant goal to
+reach *later*. For now, instead think of the *simplest* thing you could
+write which would be fun and rewarding that's a small step towards the
+amazing thing you have in your head. Once you have an idea about that
+simple step, then try and build it, play with it and then see what new
+ideas it gives you. Before long you'll be too busy having fun and making
+real progress.
+
+Just make sure to share your work with others!
+
+> Authored by Sam Aaron, translated to notebook by Jackson Kearl

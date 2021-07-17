@@ -1,0 +1,1 @@
+The content in this folder is copyright Sam Aaron with all rights reserved and is included in this branch for dempnstration purposes only. License available at https://github.com/sonic-pi-net/sonic-pi/blob/main/LICENSE.md
