@@ -4,7 +4,7 @@
 	"publisher": "jakearl",
 	"description": "Language support and code running for Sonic Pi scripts",
 	"preview": true,
-	"version": "0.0.6",
+	"version": "0.0.8",
 	"repository": {
 		"url": "https://github.com/JacksonKearl/vscode-sonic-pi"
 	},
