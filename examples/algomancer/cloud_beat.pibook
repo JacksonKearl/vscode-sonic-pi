@@ -15,6 +15,7 @@ Translated to notebook by Jackson Kearl
 ```sonic-pi
 use_bpm 100
 ```
+
 # HISS
 ```sonic-pi
 live_loop :hiss_loop do
