@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { runScript, stopAllScripts } from './source-runner/extension'
+import { onRunEnded, onRunStarted, runScript, stopAllScripts } from './source-runner/extension'
 
 const header = `> Play this document as a notebook with the [Sonic Pi Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=jakearl.vscode-sonic-pi\n`
 
@@ -39,24 +39,23 @@ end`,
 		let bufferKind: vscode.NotebookCellKind = vscode.NotebookCellKind.Markup
 		let bufferContents: string[] = []
 		string.split('\n').forEach((line) => {
-			if (line === '```sonic-pi') {
-				cells.push(
-					new vscode.NotebookCellData(
-						bufferKind,
-						bufferContents.join('\n'),
-						bufferKind === vscode.NotebookCellKind.Markup ? 'markdown' : 'sonic-pi',
-					),
-				)
+			if (
+				line.startsWith('#') &&
+				bufferKind !== vscode.NotebookCellKind.Code &&
+				bufferContents.length
+			) {
+				cells.push(new vscode.NotebookCellData(bufferKind, bufferContents.join('\n'), 'markdown'))
+				bufferKind = vscode.NotebookCellKind.Markup
+				bufferContents = []
+				bufferContents.push(line)
+			} else if (line === '```' && bufferKind !== vscode.NotebookCellKind.Code) {
+				cells.push(new vscode.NotebookCellData(bufferKind, bufferContents.join('\n'), 'markdown'))
 				bufferKind = vscode.NotebookCellKind.Code
 				bufferContents = []
 			} else if (line === '```') {
-				if (bufferKind === vscode.NotebookCellKind.Markup) {
-					bufferContents.push(line)
-				} else {
-					cells.push(new vscode.NotebookCellData(bufferKind, bufferContents.join('\n'), 'sonic-pi'))
-					bufferKind = vscode.NotebookCellKind.Markup
-					bufferContents = []
-				}
+				cells.push(new vscode.NotebookCellData(bufferKind, bufferContents.join('\n'), 'sonic-pi'))
+				bufferKind = vscode.NotebookCellKind.Markup
+				bufferContents = []
 			} else {
 				bufferContents.push(line)
 			}
@@ -80,6 +79,12 @@ type CellWorkingCopy = {
 	content: string
 	execution: vscode.NotebookCellExecution
 	cell: vscode.NotebookCell
+	hasEnded: boolean
+}
+
+const endExecution = (cell: CellWorkingCopy) => {
+	if (!cell.hasEnded) cell.execution.end(true)
+	cell.hasEnded = true
 }
 
 type NotebookWorkingCopy = {
@@ -94,6 +99,11 @@ export class NotebookController {
 	private workingCopies = new Map<string, NotebookWorkingCopy>()
 	private controller: vscode.NotebookController
 
+	private pendingExecutions: (() => void)[] = []
+	private sentExecutions: Map<number, () => void> = new Map()
+
+	private disposables = new Set<{ dispose: () => void }>()
+
 	constructor(id: string, notebookType: string, label: string) {
 		this.controller = vscode.notebooks.createNotebookController(
 			id,
@@ -102,11 +112,31 @@ export class NotebookController {
 			this.handler.bind(this),
 		)
 
+		this.disposables.add(this.controller)
+
+		this.disposables.add(
+			onRunStarted((num) => {
+				if (this.pendingExecutions.length) {
+					const started = this.pendingExecutions.shift()!
+					this.sentExecutions.set(num, started)
+				}
+			}),
+		)
+
+		this.disposables.add(
+			onRunEnded((num) => {
+				this.sentExecutions.get(num)?.()
+			}),
+		)
+
 		this.controller.supportedLanguages = ['sonic-pi']
 	}
 
 	dispose() {
-		this.controller.dispose()
+		for (const disposable of this.disposables.values()) {
+			disposable.dispose()
+		}
+		this.disposables.clear()
 	}
 
 	stopNotebook(cellUri: string) {
@@ -114,7 +144,7 @@ export class NotebookController {
 			const cellWorkingCopy = notebookWorkingCopy.executionHistory.get(cellUri)
 			if (cellWorkingCopy) {
 				for (const entry of notebookWorkingCopy.executionHistory.values()) {
-					entry.execution.end(true)
+					endExecution(entry)
 				}
 			}
 			stopAllScripts()
@@ -122,7 +152,7 @@ export class NotebookController {
 		}
 	}
 
-	playCellFromURI(cellUri: string) {
+	async playCellFromURI(cellUri: string) {
 		let notebook: vscode.NotebookDocument | undefined = undefined
 		let cell: vscode.NotebookCell | undefined = undefined
 		for (const notebookWorkingCopy of this.workingCopies.values()) {
@@ -139,11 +169,12 @@ export class NotebookController {
 			)
 		}
 
-		this.queueCell(notebook, cell)
-		this.triggerPlay(notebook)
+		const executed = this.queueCell(notebook, cell)
+		await this.triggerPlay(notebook)
+		endExecution(executed)
 	}
 
-	private handler(cells: vscode.NotebookCell[], notebook: vscode.NotebookDocument): void {
+	private async handler(cells: vscode.NotebookCell[], notebook: vscode.NotebookDocument): Promise<void> {
 		const workingCopy: NotebookWorkingCopy = this.workingCopies.get(getKey(notebook)) ?? {
 			executionHistory: new Map<string, CellWorkingCopy>(),
 			notebook,
@@ -151,14 +182,12 @@ export class NotebookController {
 
 		this.workingCopies.set(notebook.uri.toString(), workingCopy)
 
-		for (const cell of cells) {
-			this.queueCell(notebook, cell)
-		}
-
-		this.triggerPlay(notebook)
+		const cellWorkingCopies = cells.map((cell) => this.queueCell(notebook, cell))
+		await this.triggerPlay(notebook)
+		cellWorkingCopies.forEach((e) => endExecution(e))
 	}
 
-	private queueCell(notebook: vscode.NotebookDocument, cell: vscode.NotebookCell) {
+	private queueCell(notebook: vscode.NotebookDocument, cell: vscode.NotebookCell): CellWorkingCopy {
 		const workingCopy: NotebookWorkingCopy = this.workingCopies.get(getKey(notebook)) ?? {
 			executionHistory: new Map<string, CellWorkingCopy>(),
 			notebook,
@@ -166,39 +195,67 @@ export class NotebookController {
 
 		const existingRun = workingCopy.executionHistory.get(getKey(cell))
 		if (existingRun) {
-			existingRun.execution.end(true)
+			endExecution(existingRun)
 		}
 
 		const execution = this.controller.createNotebookCellExecution(cell)
 		execution.start()
 		const scriptAsRun = cell.document.getText()
-		workingCopy.executionHistory.set(getKey(cell), {
+		const cellWorkingCopy = {
 			content: scriptAsRun,
 			execution,
 			cell,
-		})
+			hasEnded: false,
+		}
 
-		execution.token.onCancellationRequested(() => {
-			runScript(silenceScript(scriptAsRun))
-			execution.end(true)
+		workingCopy.executionHistory.set(getKey(cell), cellWorkingCopy)
+
+		execution.token.onCancellationRequested(async () => {
+			await this.runScript(silenceScript(scriptAsRun))
+			// TODO.. with this, the execution end too early (the loop hasn't finished yet),
+			// without it the execution ends too late (lots of time between the music stopping and the completion event)
+			endExecution(cellWorkingCopy)
 			workingCopy.executionHistory.delete(getKey(cell))
 		})
+
+		return cellWorkingCopy
 	}
 
-	private triggerPlay(notebook: vscode.NotebookDocument) {
+	private async triggerPlay(notebook: vscode.NotebookDocument): Promise<void> {
 		const workingCopy: NotebookWorkingCopy = this.workingCopies.get(getKey(notebook)) ?? {
 			executionHistory: new Map<string, CellWorkingCopy>(),
 			notebook,
 		}
 
-		const toPlay = notebook
-			.getCells()
+		const cells = notebook.getCells()
+
+		const scriptToPlay = cells
 			.map((cell) => workingCopy.executionHistory.get(getKey(cell))?.content)
 			.filter((x): x is string => x !== undefined)
 			.join('\n')
 
-		runScript(toPlay)
+		await this.runScript(scriptToPlay)
+	}
+
+	private runScript(script: string): Promise<void> {
+		return new Promise((c) => {
+			let hasResolved = false
+			const resolve = () => {
+				if (!hasResolved) c()
+				hasResolved = true
+			}
+			this.pendingExecutions.push(resolve)
+			runScript(script)
+		})
 	}
 }
 
-const silenceScript = (script: string): string => script.replace(/live_loop.*?do\n/g, '$& stop\n')
+const silenceScript = (script: string): string => {
+	const loops = /live_loop.*?do\n/g
+	let loop: RegExpExecArray | null
+	let stops = ''
+	while ((loop = loops.exec(script))) {
+		stops += loop[0] + 'stop\nend\n'
+	}
+	return stops
+}

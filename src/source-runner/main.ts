@@ -54,6 +54,9 @@ export class Main {
 	qtBrowserLightCss: string
 	qtBrowserHcCss: string
 
+	onRunStarted = new vscode.EventEmitter<number>()
+	onRunEnded = new vscode.EventEmitter<number>()
+
 	guiSendToServerPort: number
 	guiListenToServerPort: number
 	serverListenToGuiPort: number
@@ -256,6 +259,12 @@ export class Main {
 		osc.open()
 		osc.on('/log/info', (message: { args: any }) => {
 			// console.log('Got /log/info' + ' -> ' + message.args[0] + ', ' + message.args[1])
+			const parse = /(Completed|Starting) run (\d+)/.exec(message.args[1])
+			if (parse) {
+				const num = +parse[2]
+				if (parse[1] === 'Completed') this.onRunEnded.fire(num)
+				else if (parse[1] === 'Starting') this.onRunStarted.fire(num)
+			}
 			this.log(message.args[1])
 		})
 

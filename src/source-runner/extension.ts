@@ -42,6 +42,14 @@ export const runScript = (code: string) => {
 	main.runCode(code)
 }
 
+export const onRunStarted = (listener: (num: number) => void) => {
+	return main.onRunStarted.event(listener)
+}
+
+export const onRunEnded = (listener: (num: number) => void) => {
+	return main.onRunEnded.event(listener)
+}
+
 export const stopAllScripts = () => {
 	if (!main) {
 		throw Error('Runner not initialized')
