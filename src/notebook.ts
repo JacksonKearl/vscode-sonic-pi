@@ -11,7 +11,7 @@ export const serializer: vscode.NotebookSerializer = {
 				...book.cells.map((cell) =>
 					cell.kind === vscode.NotebookCellKind.Markup
 						? `${cell.value}`
-						: `\`\`\`sonic-pi\n${cell.value}\n\`\`\``,
+						: `\`\`\`\n${cell.value}\n\`\`\``,
 				),
 			].join('\n'),
 		),
@@ -211,10 +211,10 @@ export class NotebookController {
 		workingCopy.executionHistory.set(getKey(cell), cellWorkingCopy)
 
 		execution.token.onCancellationRequested(async () => {
-			await this.runScript(silenceScript(scriptAsRun))
-			// TODO.. with this, the execution end too early (the loop hasn't finished yet),
+			// TODO.. with this endExecution call, the execution end too early (the loop hasn't finished yet),
 			// without it the execution ends too late (lots of time between the music stopping and the completion event)
 			endExecution(cellWorkingCopy)
+			await this.runScript(silenceScript(scriptAsRun))
 			workingCopy.executionHistory.delete(getKey(cell))
 		})
 

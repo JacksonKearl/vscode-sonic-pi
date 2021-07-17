@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('vscode-sonic-pi.runCell', async () => {
 			const cellUri = vscode.window.activeTextEditor?.document.uri
 			if (cellUri) {
-				notebookController.playCellFromURI(cellUri.toString())
+				void notebookController.playCellFromURI(cellUri.toString())
 			}
 		}),
 	)
