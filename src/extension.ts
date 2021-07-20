@@ -16,10 +16,27 @@ export function activate(context: vscode.ExtensionContext) {
 	activate_runner(context)
 
 	context.subscriptions.push(
+		vscode.commands.registerCommand('vscode-sonic-pi.checkInstall', () => {
+			void vscode.commands.executeCommand('setContext', 'sonicPiInstalled', true)
+			void vscode.window.showInformationMessage('All Good!')
+		}),
+	)
+
+	context.subscriptions.push(
 		vscode.commands.registerCommand('vscode-sonic-pi.openExamples', () => {
 			void vscode.commands.executeCommand(
 				'vscode.openFolder',
 				vscode.Uri.joinPath(context.extensionUri, 'examples'),
+			)
+		}),
+	)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('vscode-sonic-pi.openTutorial', () => {
+			void vscode.commands.executeCommand(
+				'vscode.openWith',
+				vscode.Uri.joinPath(context.extensionUri, 'tutorial', '1_Welcome to Sonic Pi.pibook'),
+				'sonic-pi-book',
 			)
 		}),
 	)

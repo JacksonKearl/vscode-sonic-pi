@@ -18,12 +18,15 @@
 	"activationEvents": [
 		"onLanguage:sonic-pi",
 		"onCommand:vscode-sonic-pi.openExamples",
+		"onCommand:vscode-sonic-pi.openTutorial",
 		"onCommand:vscode-sonic-pi.startserver",
 		"onCommand:vscode-sonic-pi.run",
+		"onCommand:vscode-sonic-pi.checkInstall",
 		"onCommand:vscode-sonic-pi.runCell",
 		"onCommand:vscode-sonic-pi.runselected",
 		"onCommand:vscode-sonic-pi.newNotebook",
-    "onNotebook:sonic-pi-book"
+    "onNotebook:sonic-pi-book",
+    "onWalkthrough:vscode-sonic-pi.walkthrough"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -36,6 +39,45 @@
       }
       ]
     },
+    "walkthroughs": [
+      {
+        "id": "vscode-sonic-pi.walkthrough",
+        "title": "Begin using Sonic Pi in VS Code",
+        "description": "Learn how to set up Sonic Pi in VS Code and see some examples for getting started with Sonic Pi development",
+        "steps": [
+          {
+            "id": "vscode-sonic-pi.checkInstall",
+            "title": "Verify your Sonic Pi installation",
+            "description": "VS Code for Sonic Pi requires Sonic Pi to be installed on your system.\n[Check your Installation](command:vscode-sonic-pi.checkInstall)\nIf you haven't yet downloaded Sonic Pi, go here to [download it now](https://sonic-pi.net/)",
+            "completionEvents": [
+              "onContext:sonicPiInstalled"
+            ],
+            "media": {
+              "image": "img/sonic-pi.png",
+              "altText": "Sonic Pi icon"
+            }
+          },
+          {
+            "id": "vscode-sonic-pi.openTutorial",
+            "title": "Open Sonic Pi Tutorial",
+            "description": "Get started with the tutorial for using Sonic Pi in VS Code\n[Open Tutorial](command:vscode-sonic-pi.openTutorial)",
+            "media": {
+              "image": "img/sonic-pi.png",
+              "altText": "Sonic Pi icon"
+            }
+          },
+          {
+            "id": "vscode-sonic-pi.openExamples",
+            "title": "Open Sonic Pi Examples",
+            "description": "Try out some examples of Sonic Pi scripts\n[Open Examples](command:vscode-sonic-pi.openExamples)",
+            "media": {
+              "image": "img/sonic-pi.png",
+              "altText": "Sonic Pi icon"
+            }
+          }
+        ]
+      }
+    ],
     "notebooks": [
       {
         "type": "sonic-pi-book",
@@ -66,6 +108,11 @@
 				"title": "Start Server",
 				"category": "Sonic Pi"
 			},
+			{
+				"command": "vscode-sonic-pi.checkInstall",
+				"title": "Check Install",
+ 				"category": "Sonic Pi"
+			},
       {
         "command": "vscode-sonic-pi.newNotebook",
         "title": "New Notebook",
@@ -74,6 +121,11 @@
 			{
 				"command": "vscode-sonic-pi.openExamples",
 				"title": "Open Examples",
+				"category": "Sonic Pi"
+			},
+			{
+				"command": "vscode-sonic-pi.openTutorial",
+				"title": "Open Tutorial",
 				"category": "Sonic Pi"
 			},
 			{

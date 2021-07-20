@@ -12,18 +12,18 @@ Note > requires a powerful machine to run smoothly.
 Translated to notebook by Jackson Kearl
 
 # Setup
-```sonic-pi
+```
 use_bpm 100
 ```
 # HISS
-```sonic-pi
+```
 live_loop :hiss_loop do
   sample :vinyl_hiss, amp: 2
   sleep sample_duration :vinyl_hiss
 end
 ```
 # HIHAT
-```sonic-pi
+```
 define :hihat do
   use_synth :pnoise
   with_fx :hpf, cutoff: 120 do
@@ -40,7 +40,7 @@ live_loop :hihat_loop do
 end
 ```
 # SNARE
-```sonic-pi
+```
 live_loop :snare_loop do
   sleep ring(2.5, 3)[tick]
   with_fx :lpf, cutoff: 100 do
@@ -50,7 +50,7 @@ live_loop :snare_loop do
 end
 ```
 # BASSDRUM
-```sonic-pi
+```
 define :bassdrum do |note1, duration, note2 = note1|
   use_synth :sine
   with_fx :hpf, cutoff: 100 do
@@ -79,7 +79,7 @@ live_loop :bassdrum_schleife do
 end
 ```
 # CHORD CONTROL
-```sonic-pi
+```
 # This part provides two rings called "chord_high" and "chord_low".
 # They always contain the "permitted" notes in order that everything will be in tune.
 # You can use them in other live loops to select notes.

@@ -42,7 +42,8 @@ end`,
 			if (
 				line.startsWith('#') &&
 				bufferKind !== vscode.NotebookCellKind.Code &&
-				bufferContents.length
+				bufferContents.length &&
+				bufferContents.join('\n').trim().length
 			) {
 				cells.push(new vscode.NotebookCellData(bufferKind, bufferContents.join('\n'), 'markdown'))
 				bufferKind = vscode.NotebookCellKind.Markup
