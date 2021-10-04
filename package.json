@@ -1,42 +1,40 @@
 {
-	"name": "vscode-sonic-pi",
-	"displayName": "Sonic Pi",
-	"publisher": "jakearl",
-	"description": "Language support and code running for Sonic Pi scripts",
-	"preview": true,
-	"version": "0.0.8",
-	"repository": {
-		"url": "https://github.com/JacksonKearl/vscode-sonic-pi"
-	},
-	"icon": "img/icon.png",
-	"engines": {
-		"vscode": "^1.58.0"
-	},
-	"categories": [
-		"Programming Languages"
-	],
-	"activationEvents": [
-		"onLanguage:sonic-pi",
-		"onCommand:vscode-sonic-pi.openExamples",
-		"onCommand:vscode-sonic-pi.openTutorial",
-		"onCommand:vscode-sonic-pi.startserver",
-		"onCommand:vscode-sonic-pi.run",
-		"onCommand:vscode-sonic-pi.checkInstall",
-		"onCommand:vscode-sonic-pi.runCell",
-		"onCommand:vscode-sonic-pi.runselected",
-		"onCommand:vscode-sonic-pi.newNotebook",
-    "onNotebook:sonic-pi-book",
-    "onWalkthrough:vscode-sonic-pi.walkthrough"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
+  "name": "vscode-sonic-pi",
+  "displayName": "Sonic Pi",
+  "publisher": "jakearl",
+  "description": "Language support and code running for Sonic Pi scripts",
+  "preview": true,
+  "version": "0.0.8",
+  "repository": {
+    "url": "https://github.com/JacksonKearl/vscode-sonic-pi"
+  },
+  "icon": "img/icon.png",
+  "engines": {
+    "vscode": "^1.58.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:sonic-pi",
+    "onCommand:vscode-sonic-pi.openExamples",
+    "onCommand:vscode-sonic-pi.openTutorial",
+    "onCommand:vscode-sonic-pi.startserver",
+    "onCommand:vscode-sonic-pi.run",
+    "onCommand:vscode-sonic-pi.checkInstall",
+    "onCommand:vscode-sonic-pi.runCell",
+    "onCommand:vscode-sonic-pi.runselected",
+    "onCommand:vscode-sonic-pi.newNotebook",
+    "onNotebook:sonic-pi-book"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
     "menus": {
       "file/newFile": [
         {
           "command": "vscode-sonic-pi.newNotebook",
-          "group": "notebook",
-          "title": "Sonic Pi Notebook"
-      }
+          "group": "notebook"
+        }
       ]
     },
     "walkthroughs": [
@@ -89,217 +87,218 @@
         ]
       }
     ],
-		"languages": [
-			{
-				"id": "sonic-pi",
-				"aliases": [
-					"Sonic Pi",
-					"sonic-pi"
-				],
-				"extensions": [
-					"pi"
-				],
-				"configuration": "./language-configuration.json"
-			}
-		],
-		"commands": [
-			{
-				"command": "vscode-sonic-pi.startserver",
-				"title": "Start Server",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.checkInstall",
-				"title": "Check Install",
- 				"category": "Sonic Pi"
-			},
+    "languages": [
       {
-        "command": "vscode-sonic-pi.newNotebook",
-        "title": "New Notebook",
+        "id": "sonic-pi",
+        "aliases": [
+          "Sonic Pi",
+          "sonic-pi"
+        ],
+        "extensions": [
+          "pi"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "vscode-sonic-pi.startserver",
+        "title": "Start Server",
         "category": "Sonic Pi"
       },
-			{
-				"command": "vscode-sonic-pi.openExamples",
-				"title": "Open Examples",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.openTutorial",
-				"title": "Open Tutorial",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.run",
-				"title": "Run",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.runCell",
-				"title": "Run Notebook Cell",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.runselected",
-				"title": "Run selected text",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.stop",
-				"title": "Stop",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.stopNotebook",
-				"title": "Stop Notebook",
-				"category": "Sonic Pi"
-			},
-			{
-				"command": "vscode-sonic-pi.togglerecording",
-				"title": "Toggle recording",
-				"category": "Sonic Pi"
-			}
-		],
-		"keybindings": [
-			{
-				"command": "vscode-sonic-pi.run",
-				"key": "F5",
-				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
-			},
-			{
-				"command": "vscode-sonic-pi.run",
-				"key": "alt+r",
-				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
-			},
-			{
-				"command": "vscode-sonic-pi.runCell",
-				"key": "F5",
-				"when": "editorLangId=='sonic-pi' && notebookType=='sonic-pi-book'"
-			},
-			{
-				"command": "vscode-sonic-pi.runCell",
-				"key": "alt+r",
-				"when": "editorLangId=='sonic-pi' && notebookType=='sonic-pi-book'"
-			},
+      {
+        "command": "vscode-sonic-pi.checkInstall",
+        "title": "Check Install",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.newNotebook",
+        "title": "Create new Sonic Pi notebook",
+        "shortTitle": "Sonic Pi Book",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.openExamples",
+        "title": "Open Examples",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.openTutorial",
+        "title": "Open Tutorial",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.run",
+        "title": "Run",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.runCell",
+        "title": "Run Notebook Cell",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.runselected",
+        "title": "Run selected text",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.stop",
+        "title": "Stop",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.stopNotebook",
+        "title": "Stop Notebook",
+        "category": "Sonic Pi"
+      },
+      {
+        "command": "vscode-sonic-pi.togglerecording",
+        "title": "Toggle recording",
+        "category": "Sonic Pi"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "vscode-sonic-pi.run",
+        "key": "F5",
+        "when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
+      },
+      {
+        "command": "vscode-sonic-pi.run",
+        "key": "alt+r",
+        "when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
+      },
+      {
+        "command": "vscode-sonic-pi.runCell",
+        "key": "F5",
+        "when": "editorLangId=='sonic-pi' && notebookType=='sonic-pi-book'"
+      },
+      {
+        "command": "vscode-sonic-pi.runCell",
+        "key": "alt+r",
+        "when": "editorLangId=='sonic-pi' && notebookType=='sonic-pi-book'"
+      },
       {
         "command": "vscode-sonic-pi.stopNotebook",
         "key": "alt+s",
         "when": "notebookType=='sonic-pi-book'"
       },
-			{
-				"command": "vscode-sonic-pi.runselected",
-				"key": "alt+t",
-				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
-			},
-			{
-				"command": "vscode-sonic-pi.stop",
-				"key": "alt+s",
-				"when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
-			},
-			{
-				"command": "vscode-sonic-pi.togglerecording",
-				"key": "shift+alt+r",
-				"when": "editorLangId=='sonic-pi'"
-			}
-		],
-		"configuration": {
-			"title": "Sonic Pi",
-			"properties": {
-				"vscode-sonic-pi.sonicPiRootDirectory": {
-					"type": "string",
-					"description": "Set Sonic Pi installation directory.\nOnly use this if the default does not work for you."
-				},
-				"vscode-sonic-pi.launchSonicPiServerAutomatically": {
-					"type": "string",
-					"enum": [
-						"ruby",
-						"start",
-						"never",
-						"custom"
-					],
-					"enumDescriptions": [
-						"Start the server when there is a ruby file open in the editor",
-						"Start the server when starting vscode",
-						"Do not start the server automatically (must launch it manually through the Sonic Pi: Start Server command)",
-						"Start the server when opening a custom file extension - enter in the Launch Sonic Pi Server Custom Extension setting"
-					],
-					"default": "ruby",
-					"description": "Launch Sonic Pi Server automatically when..."
-				},
-				"vscode-sonic-pi.launchSonicPiServerCustomExtension": {
-					"type": "string",
-					"description": "If the Launch server automatically setting is set to custom, what extension triggers the launch?"
-				},
-				"vscode-sonic-pi.runFileWhenRunSelectedIsEmpty": {
-					"type": "string",
-					"enum": [
-						"always",
-						"never"
-					],
-					"description": "If there is no selection when Run selected is triggered, run the whole file"
-				},
-				"vscode-sonic-pi.invertStereo": {
-					"type": "boolean",
-					"default": false,
-					"description": "Invert stereo"
-				},
-				"vscode-sonic-pi.forceMono": {
-					"type": "boolean",
-					"default": false,
-					"description": "Force mono output"
-				},
-				"vscode-sonic-pi.safeMode": {
-					"type": "boolean",
-					"default": true,
-					"description": "Synth argument checking functions.\nIf disabled, certain synth opt values may\ncreate unexpectedly loud or uncomfortable sounds."
-				},
-				"vscode-sonic-pi.logAutoscroll": {
-					"type": "boolean",
-					"default": true,
-					"description": "Autoscroll the log"
-				},
-				"vscode-sonic-pi.logClearOnRun": {
-					"type": "boolean",
-					"default": true,
-					"description": "Clear the log when executing a run"
-				},
-				"vscode-sonic-pi.flashBackgroundColor": {
-					"type": "string",
-					"default": "rgba(255,20,147,1.0)",
-					"description": "Background flash color when running code"
-				},
-				"vscode-sonic-pi.flashTextColor": {
-					"type": "string",
-					"default": "rgba(255,255,255,1.0)",
-					"description": "Text flash color when running code"
-				}
-			}
-		},
-		"grammars": [
-			{
-				"language": "sonic-pi",
-				"scopeName": "source.sonic-pi",
-				"path": "./syntaxes/sonic-pi.tmLanguage.json"
-			}
-		]
-	},
-	"devDependencies": {
-		"@types/chai": "^4.2.15",
-		"@types/mocha": "^8.2.2",
-		"@types/node": "^14.14.37",
-		"@types/vscode": "^1.58.0",
-		"@typescript-eslint/eslint-plugin": "^4.19.0",
-		"@typescript-eslint/parser": "^4.19.0",
-		"chai": "^4.3.4",
-		"eslint": "^7.23.0",
-		"eslint-config-prettier": "^8.1.0",
-		"eslint-plugin-prettier": "^3.3.1",
-		"mocha": "^8.3.2",
-		"prettier": "^2.2.1",
-		"typescript": "^4.2.3"
-	},
-	"dependencies": {
-		"osc-js": "^2.1.0",
-		"utf8": "^3.0.0",
-		"uuid": "^8.1.0"
-	}
+      {
+        "command": "vscode-sonic-pi.runselected",
+        "key": "alt+t",
+        "when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
+      },
+      {
+        "command": "vscode-sonic-pi.stop",
+        "key": "alt+s",
+        "when": "editorLangId=='sonic-pi' && notebookType!='sonic-pi-book'"
+      },
+      {
+        "command": "vscode-sonic-pi.togglerecording",
+        "key": "shift+alt+r",
+        "when": "editorLangId=='sonic-pi'"
+      }
+    ],
+    "configuration": {
+      "title": "Sonic Pi",
+      "properties": {
+        "vscode-sonic-pi.sonicPiRootDirectory": {
+          "type": "string",
+          "description": "Set Sonic Pi installation directory.\nOnly use this if the default does not work for you."
+        },
+        "vscode-sonic-pi.launchSonicPiServerAutomatically": {
+          "type": "string",
+          "enum": [
+            "ruby",
+            "start",
+            "never",
+            "custom"
+          ],
+          "enumDescriptions": [
+            "Start the server when there is a ruby file open in the editor",
+            "Start the server when starting vscode",
+            "Do not start the server automatically (must launch it manually through the Sonic Pi: Start Server command)",
+            "Start the server when opening a custom file extension - enter in the Launch Sonic Pi Server Custom Extension setting"
+          ],
+          "default": "ruby",
+          "description": "Launch Sonic Pi Server automatically when..."
+        },
+        "vscode-sonic-pi.launchSonicPiServerCustomExtension": {
+          "type": "string",
+          "description": "If the Launch server automatically setting is set to custom, what extension triggers the launch?"
+        },
+        "vscode-sonic-pi.runFileWhenRunSelectedIsEmpty": {
+          "type": "string",
+          "enum": [
+            "always",
+            "never"
+          ],
+          "description": "If there is no selection when Run selected is triggered, run the whole file"
+        },
+        "vscode-sonic-pi.invertStereo": {
+          "type": "boolean",
+          "default": false,
+          "description": "Invert stereo"
+        },
+        "vscode-sonic-pi.forceMono": {
+          "type": "boolean",
+          "default": false,
+          "description": "Force mono output"
+        },
+        "vscode-sonic-pi.safeMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Synth argument checking functions.\nIf disabled, certain synth opt values may\ncreate unexpectedly loud or uncomfortable sounds."
+        },
+        "vscode-sonic-pi.logAutoscroll": {
+          "type": "boolean",
+          "default": true,
+          "description": "Autoscroll the log"
+        },
+        "vscode-sonic-pi.logClearOnRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Clear the log when executing a run"
+        },
+        "vscode-sonic-pi.flashBackgroundColor": {
+          "type": "string",
+          "default": "rgba(255,20,147,1.0)",
+          "description": "Background flash color when running code"
+        },
+        "vscode-sonic-pi.flashTextColor": {
+          "type": "string",
+          "default": "rgba(255,255,255,1.0)",
+          "description": "Text flash color when running code"
+        }
+      }
+    },
+    "grammars": [
+      {
+        "language": "sonic-pi",
+        "scopeName": "source.sonic-pi",
+        "path": "./syntaxes/sonic-pi.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.15",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^14.14.37",
+    "@types/vscode": "^1.58.0",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "chai": "^4.3.4",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "mocha": "^8.3.2",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "osc-js": "^2.1.0",
+    "utf8": "^3.0.0",
+    "uuid": "^8.1.0"
+  }
 }

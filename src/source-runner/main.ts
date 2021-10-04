@@ -113,9 +113,6 @@ export class Main {
 			this.rubyPath = this.config.commandPath()
 		}
 
-		console.log('Using Sonic Pi root directory: ' + this.rootPath)
-		console.log('Using ruby: ' + this.rubyPath)
-
 		this.rubyServerPath = this.rootPath + '/app/server/ruby/bin/sonic-pi-server.rb'
 		this.portDiscoveryPath = this.rootPath + '/app/server/ruby/bin/port-discovery.rb'
 		this.fetchUrlPath = this.rootPath + '/app/server/ruby/bin/fetch-url.rb'
@@ -305,7 +302,7 @@ export class Main {
 		})
 
 		osc.on('/error', (message: any) => {
-			console.log('Got /error')
+			// console.log('Got /error')
 			this.processError(message)
 		})
 
@@ -481,7 +478,7 @@ export class Main {
 
 		let ruby_server = child_process.spawn(this.rubyPath, args)
 		ruby_server.stdout.on('data', (data: any) => {
-			console.log(`stdout: ${data}`)
+			// console.log(`stdout: ${data}`)
 			this.log(`stdout: ${data}`)
 			if (data.toString().match(/.*Sonic Pi Server successfully booted.*/)) {
 				this.updateMixerSettings()
@@ -489,7 +486,7 @@ export class Main {
 		})
 
 		ruby_server.stderr.on('data', (data: any) => {
-			console.log(`stderr: ${data}`)
+			// console.log(`stdserr: ${data}`)
 			this.log(`stderr: ${data}`)
 		})
 	}

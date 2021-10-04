@@ -83,8 +83,11 @@ type CellWorkingCopy = {
 	hasEnded: boolean
 }
 
-const endExecution = (cell: CellWorkingCopy) => {
-	if (!cell.hasEnded) cell.execution.end(true)
+const endExecution = (cell: CellWorkingCopy, reason: string) => {
+	if (!cell.hasEnded) {
+		cell.execution.end(true)
+		console.log('ending cell', cell, ' because ', reason)
+	}
 	cell.hasEnded = true
 }
 
@@ -99,6 +102,8 @@ const getKey = (thing: vscode.NotebookCell | vscode.NotebookDocument) =>
 export class NotebookController {
 	private workingCopies = new Map<string, NotebookWorkingCopy>()
 	private controller: vscode.NotebookController
+
+	private pendingCancellations = new Set<Promise<void>>()
 
 	private pendingExecutions: (() => void)[] = []
 	private sentExecutions: Map<number, () => void> = new Map()
@@ -145,7 +150,7 @@ export class NotebookController {
 			const cellWorkingCopy = notebookWorkingCopy.executionHistory.get(cellUri)
 			if (cellWorkingCopy) {
 				for (const entry of notebookWorkingCopy.executionHistory.values()) {
-					endExecution(entry)
+					endExecution(entry, 'stopNotebook')
 				}
 			}
 			stopAllScripts()
@@ -172,7 +177,7 @@ export class NotebookController {
 
 		const executed = this.queueCell(notebook, cell)
 		await this.triggerPlay(notebook)
-		endExecution(executed)
+		endExecution(executed, 'playcellFromURI')
 	}
 
 	private async handler(cells: vscode.NotebookCell[], notebook: vscode.NotebookDocument): Promise<void> {
@@ -185,7 +190,7 @@ export class NotebookController {
 
 		const cellWorkingCopies = cells.map((cell) => this.queueCell(notebook, cell))
 		await this.triggerPlay(notebook)
-		cellWorkingCopies.forEach((e) => endExecution(e))
+		cellWorkingCopies.forEach((e) => endExecution(e, 'handler'))
 	}
 
 	private queueCell(notebook: vscode.NotebookDocument, cell: vscode.NotebookCell): CellWorkingCopy {
@@ -196,7 +201,7 @@ export class NotebookController {
 
 		const existingRun = workingCopy.executionHistory.get(getKey(cell))
 		if (existingRun) {
-			endExecution(existingRun)
+			endExecution(existingRun, 'queue found existing')
 		}
 
 		const execution = this.controller.createNotebookCellExecution(cell)
@@ -214,9 +219,12 @@ export class NotebookController {
 		execution.token.onCancellationRequested(async () => {
 			// TODO.. with this endExecution call, the execution end too early (the loop hasn't finished yet),
 			// without it the execution ends too late (lots of time between the music stopping and the completion event)
-			endExecution(cellWorkingCopy)
-			await this.runScript(silenceScript(scriptAsRun))
+			endExecution(cellWorkingCopy, 'cancellation requested')
+			const cancellation = this.runScript(silenceScript(scriptAsRun), true)
 			workingCopy.executionHistory.delete(getKey(cell))
+			this.pendingCancellations.add(cancellation)
+			await cancellation
+			this.pendingCancellations.delete(cancellation)
 		})
 
 		return cellWorkingCopy
@@ -238,12 +246,16 @@ export class NotebookController {
 		await this.runScript(scriptToPlay)
 	}
 
-	private runScript(script: string): Promise<void> {
+	private runID = 0
+	private async runScript(script: string, isCancellation = false): Promise<void> {
+		const id = this.runID++
+		if (!isCancellation) await Promise.all(this.pendingCancellations.values())
 		return new Promise((c) => {
-			let hasResolved = false
+			console.log('Running script', id, ':', script)
+
 			const resolve = () => {
-				if (!hasResolved) c()
-				hasResolved = true
+				c()
+				console.log('Finished running script', id)
 			}
 			this.pendingExecutions.push(resolve)
 			runScript(script)

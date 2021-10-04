@@ -35,7 +35,6 @@ export class OscSender {
 	}
 
 	send(msg: any) {
-		console.log('sending on port', this.port, msg)
 		this.osc.send(msg)
 	}
 }
